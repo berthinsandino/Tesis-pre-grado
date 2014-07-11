@@ -1,0 +1,328 @@
+\chapter{PRE-PROCESAMIENTO}
+\label{cap-preprocesamiento}
+\setcounter{secnumdepth}{0}
+Antes de poder extraer algún tipo de información relevante de las imágenes
+adquiridas, es necesario un pre-procesamiento básico de las mismas. El objetivo
+de este paso es la eliminación de regiones dentro de la imagen cuya información
+no es de interés para el presente trabajo, de esta forma se puede alterar el
+problema original (con muchas restricciones) a otro con características que
+puedan ser explotadas.
+
+\setcounter{secnumdepth}{3}
+\section{\textit{Color Filtering}}
+Considerando que los letreros sobre los cuales se basa el presente trabajo
+comparten tonalidades diferentes del color azul tanto para el marcado de la
+señal como para el texto, se aprovecha esta característica para limitar las
+regiones de búsqueda. Este filtrado será de gran utilidad debido a que las
+fotografías consideradas dentro del \textit{training data set} poseen
+dimensiones de tamaño considerable.
+
+\subsection{Filtro \textit{Ad hoc}}
+La finalidad del uso del presente filtro es dejar pasar aquellos
+\textit{pixels} que se encuentren dentro de un rango de color pre-establecido.
+
+Un total de 14 muestras fueron utilizadas durante el análisis para determinar
+el mejor rango de color, tomándose en cuenta 2 modelos de color (RGB y HSV).
+Como se observa en el histograma del modelo RGB
+(Figura~\ref{Fig:Cap-segmentaciontexto:HistogramaRGB}), el posible rango sería
+$[0,~250]$ para R, $[0,~200]$ para G y $[0,~150]$ para B. La
+Figura~\ref{Fig:Cap-segmentaciontexto:coloresDiferencia} es un ejemplo donde el
+uso del rango de valores permitiría que se tomen en consideración colores ajenos
+al letrero, mientras que en la Figura~\ref{Fig:Cap-segmentaciontexto:errorRGB}
+se muestran los histogramas para dos fotografías del \textit{data set} donde el
+rango de variación de los colores del letrero no permiten definir un rango
+general.
+
+\begin{figure}[h!]
+	%\centering
+	\includegraphics[width=15cm]{/Cap:SegmentacionTexto/histogramaRGB}
+	\caption{Histograma RGB resultado del análisis de las 14 muestras.}
+	\label{Fig:Cap-segmentaciontexto:HistogramaRGB}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=15cm]{/Cap:SegmentacionTexto/coloresDiferencia}
+	\caption{Cinco muestras aceptadas siguiendo la sugerencia del Histograma RGB.}
+	\label{Fig:Cap-segmentaciontexto:coloresDiferencia}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	%\subfloat[]{\includegraphics[width=7cm]{/home/berthin/Pictures/Letreros/03.jpg}\label{Fig:Cap-segmentaciontexto:errorRGB.a}} { }	
+	%\subfloat[]{\includegraphics[width=7cm]{/home/berthin/Pictures/Letreros/32.jpg}\label{Fig:Cap-segmentaciontexto:errorRGB.b}} { }\\
+	\subfloat[]{\includegraphics[width=7cm]{/Cap:SegmentacionTexto/histogramaRGB_Letreros_03.png}\label{Fig:Cap-segmentaciontexto:errorRGB.a}} { }
+  \subfloat[]{\includegraphics[width=7cm]{/Cap:SegmentacionTexto/histogramaRGB_Letreros_32}\label{Fig:Cap-segmentaciontexto:errorRGB.b}} \\
+	\subfloat[]{\includegraphics[width=7cm]{/Cap:SegmentacionTexto/histogramaRGB_Letreros_03}\label{Fig:Cap-segmentaciontexto:errorRGB.c}} { }
+  \subfloat[]{\includegraphics[width=7cm]{/Cap:SegmentacionTexto/histogramaRGB_Letreros_32}\label{Fig:Cap-segmentaciontexto:errorRGB.d}} \\
+	\caption{(c y d) Histogramas RGB de los colores del texto ubicado en los letreros (a y b) respectivamente.}
+	\label{Fig:Cap-segmentaciontexto:errorRGB}
+\end{figure}
+
+Como solución al problema encontrado con el modelo RGB, se consideraron otros
+modelos de color (HSV y YCbCr). Si se observan los valores HSV en la
+Figura~\ref{Fig:Cap-segmentaciontexto:coloresDiferencia} se podrá notar que la
+variación yace principalmente en el valor H. El resultado del análisis mostrado
+en la Figura~\ref{Fig:Cap-segmentaciontexto:HistogramaHSV} permite determinar un
+rango de valores ($[180,~360]$ para H, $[0,~100]$ para S y $[0,~100]$ para V)
+que al ser sometido a una serie de pruebas, los resultados obtenidos son
+aceptables para el objetivo del problema de filtrado que ayudará a eliminar
+partes de imágenes que no son de nuestro interés.
+
+\begin{figure}[h!]
+	\includegraphics[width=15cm]{/Cap:SegmentacionTexto/histogramaHSV}
+	\caption{Histograma HSV resultado del análisis de las 14 muestras.}
+	\label{Fig:Cap-segmentaciontexto:HistogramaHSV}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+  \subfloat[]{\includegraphics[width=7cm]{/Cap:SegmentacionTexto/filtroAdHoc_Letreros_03}\label{Fig:Cap-segmentaciontexto:filtroAdHocHSV.a}} { }
+  \subfloat[]{\includegraphics[width=7cm]{/Cap:SegmentacionTexto/filtroAdHoc_Letreros_32}\label{Fig:Cap-segmentaciontexto:filtroAdHocHSV.b}} \\
+	\caption{Resultado del filtro usando los parámetros definidos para el modelo
+	HSV de las imágenes (a y b) de la 
+	figura~\ref{Fig:Cap-segmentaciontexto:errorRGB} respectivamente.}
+	\label{Fig:Cap-segmentaciontexto:filtroAdHocHSV}
+\end{figure}
+
+\subsection{Filtro usando NNs}
+Las redes neuronales permiten desarrollar un filtro que use información extra
+para determinar o clasificar cada elemento de una imagen en dos categorías o
+grupos (la \textbf{clase 1} representará al \textit{background} y la
+\textbf{clase 2} el \textit{foreground}). Mediante este enfoque, se construyó un
+\textit{Feed-forward network} de 2 capas
+(Figura~\ref{Fig:Cap-segmentaciontexto:diagramaNN}). La primera capa
+(\textit{input layer}), con 75 \textit{features} será la encargada de brindar
+las entradas a la NN. La segunda capa (\textit{hidden layer}), cuenta con 10
+neuronas; y la última capa (\textit{output layer}), con 2 neuronas. La última
+parte de la NN estará conformada por 2 unidades de salida que representan las
+categorías de clasificación.
+
+La \textit{hidden layer} y la \textit{output layer} cuentan con unidades 
+adicionales de entrada llamadas \textit{bias units}.
+
+Los \textit{features} considerados como entrada para la NN fueron obtenidos 
+haciendo uso de la información de los \textit{pixels} vecinos. Si $P(x,y)$
+representaría un \textit{pixel} sobre el cual se desea trabajar, mediante una
+ventana de $5 \times 5$ (con $P$ como punto central) capturamos 25
+\textit{pixels} cada uno con 3 tipos de información (valores RGB). Todo ello,
+formará parte de la entrada para la NN. 
+
+\begin{figure}[h!]
+	\centering
+  \subfloat[]{\includegraphics[height=3cm]{/Cap:SegmentacionTexto/inputNN}\label{Fig:Cap-segmentaciontexto:inputNN}} { }
+  \subfloat[]{\includegraphics[height=3cm]{/Cap:SegmentacionTexto/filtroNN_Diagrama}\label{Fig:Cap-segmentaciontexto:diagramaNN}} \\
+	\caption{Ventana de $5 \times 5$ considerada para el pixel marcado con color
+	rojo. Diagrama de la NN.}
+	\label{Fig:Cap-segmentaciontexto:input&diagramaNN}
+\end{figure}
+
+A partir de un conjunto de 7 imágenes 
+(Figura~\ref{Fig:Cap-segmentaciontexto:dataNN}) que contengan letreros
+informativos se construyó una \textit{data set} de tamaño $198555 \times 75$.
+
+\begin{figure}[h!]
+	\centering
+  \subfloat[]{\includegraphics[height=1.5cm]{/Cap:SegmentacionTexto/NN_img01}\label{Fig:Cap-segmentaciontexto:diagramaNN.a}} { }
+  \subfloat[]{\includegraphics[height=1.5cm]{/Cap:SegmentacionTexto/NN_img02}\label{Fig:Cap-segmentaciontexto:diagramaNN.b}} { }
+  \subfloat[]{\includegraphics[height=2cm]{/Cap:SegmentacionTexto/NN_img03}\label{Fig:Cap-segmentaciontexto:diagramaNN.c}} { }
+  \subfloat[]{\includegraphics[height=2cm]{/Cap:SegmentacionTexto/NN_img04}\label{Fig:Cap-segmentaciontexto:diagramaNN.d}} \\
+  \subfloat[]{\includegraphics[height=1cm]{/Cap:SegmentacionTexto/NN_img05}\label{Fig:Cap-segmentaciontexto:diagramaNN.e}} { }
+  \subfloat[]{\includegraphics[height=1cm]{/Cap:SegmentacionTexto/NN_img07}\label{Fig:Cap-segmentaciontexto:diagramaNN.f}} { }
+  \subfloat[]{\includegraphics[height=1cm]{/Cap:SegmentacionTexto/NN_img06}\label{Fig:Cap-segmentaciontexto:diagramaNN.g}} \\
+	\caption{Imágenes usadas para crear el \textit{data set} para la NN.}
+	\label{Fig:Cap-segmentaciontexto:dataNN}
+\end{figure}
+
+Aleatóriamente, se derivó el $70 \%$ para la fase de \textit{training}, 
+$15 \%$ para \textit{testing} y $15 \%$ para la fase de \textit{validation}. El
+algoritmo \textit{scaled conjugate gradient backpropagation}
+\cite{Moller:1993:ScaledGD} fue usado durante el entrenamiento con el objetivo
+de actualizar los pesos de las conexiones entre neuronas así como los valores
+del las \textit{bias units}. Un resumen de fases de \textit{training, testing} y
+\textit{validation} se muestra en la
+Figura~\ref{Fig:Cap-segmentaciontexto:plots1.a} mediante las matrices de
+confusión (\textit{confusion matrices}) donde el color verde está relacionado
+con las respuestas correctas, el color rojo a las respuestas incorrectas y el
+color azul con el resultado global, y en la
+Figura~\ref{Fig:Cap-segmentaciontexto:plots1.b} se muestra la matriz de
+confusión para la Figura~\ref{Fig:Cap-segmentaciontexto:diagramaNN} cuyo
+resultado final se muestra en la
+Figura~\ref{Fig:Cap-segmentaciontexto:resultadoNN.a}.
+
+\begin{figure}[h!]
+	\centering
+  \subfloat[]{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/plotconfusion}\label{Fig:Cap-segmentaciontexto:plots1.a}} { }
+  \subfloat[]{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/plotconfusion_test}\label{Fig:Cap-segmentaciontexto:plots1.b}} \\
+  \caption[\textit{Plot matrices confusion}]{\textit{Plot matrices confusion}.
+  (a) Resumen de las fases de entrenamiento. (b) Resultado de un \textit{test}
+adicional.}
+	\label{Fig:Cap-segmentaciontexto:plots1}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+  \includegraphics[width=8cm]{/Cap:SegmentacionTexto/confusionMatrixNN1} { }
+	\includegraphics[width=8cm]{/Cap:SegmentacionTexto/confusionMatrixNN2}
+	\caption{\textit{Confusion matrices} de las dos NNs.}
+	\label{Fig:Cap-segmentaciontexto:confusionMatrixNNs}
+\end{figure}
+
+Por otra parte, se entrenó otra NN con las mismas características, pero a 
+diferencia de la presentada anteriormente, esta cuenta con 12 neuronas en la
+\textit{hidden layer} y con un \textit{data set} de mayor tamaño ($247099 \times
+75)$. Comparando resultados entre las dos NNs (Figura
+~\ref{Fig:Cap-segmentaciontexto:confusionMatrixNNs}), la primera presenta un
+mejor desempeño que la segunda debido a que se necesitaría un \textit{data set}
+de mayor tamaño y por ende un equipo de cómputo superior para que se agilicen
+los cálculos matemáticos involucrados en la fase de entrenamiento. La
+Figura~\ref{Fig:Cap-segmentaciontexto:resultadoNN} muestra los resultados
+obtenidos mediante el filtro NN sobre las mismas imágenes usadas en la
+Figura~\ref{Fig:Cap-segmentaciontexto:filtroAdHocHSV}.
+
+\begin{figure}[h!]
+	\centering
+  \subfloat[]{\includegraphics[width=7cm]{/Cap:SegmentacionTexto/filtroNN_Letreros_03}\label{Fig:Cap-segmentaciontexto:resultadoNN.a}} { }
+  \subfloat[]{\includegraphics[width=7cm]{/Cap:SegmentacionTexto/filtroNN_Letreros_32}\label{Fig:Cap-segmentaciontexto:resultadoNN.b}} \\
+	\caption{Resultado del filtro NN para las imágenes de las figuras~\ref{Fig:Cap-segmentaciontexto:errorRGB.a} y \ref{Fig:Cap-segmentaciontexto:errorRGB.b} respectivamente.}
+	\label{Fig:Cap-segmentaciontexto:resultadoNN}
+\end{figure}
+
+\section{\textit{Smoothing Spatial Filters}}
+Las imágenes que resulten del \textit{color filtering} por lo general tienden 
+a poseer pequeñas regiones las cuales, en su gran mayoría, no son relevantes
+para nuestro fin, por ello que nace la necesidad de eliminar o suavizar ese
+ruido.
+
+\subsection{\textit{Mean filter}}
+La idea de usar el \textit{mean filter} es reemplazar los valores de los 
+\textit{pixels} de la imagen con la media arimética de sus vecinos (incluyendo
+al mismo \textit{pixel}). La
+Figura~\ref{Fig:Cap-segmentaciontexto:filterMean-Median.c} fue generada usando
+el kernel expresado en \ref{Equ:Cap-segmentaciontexto:Kernel-mean}.
+\begin{equation}
+K =  \left( \begin{array}{ccc}
+1/3 & 1/3 & 1/3 \\
+1/3 & 1/3 & 1/3 \\
+1/3 & 1/3 & 1/3 \end{array} \right)
+\label{Equ:Cap-segmentaciontexto:Kernel-mean}
+\end{equation}
+
+\subsection{\textit{Median filter}}
+Filtro cuyo objetivo es reducir el ruido de una imagen reemplazando el valor 
+de un \textit{pixel} $p$ con aquel que se encuentre en la mediana de los valores
+de sus vecinos (también se toma en consideración el valor del \textit{pixel}
+$p$). 
+
+Siendo $G^{n,m}$ una imagen en escala de grises, el \textit{median filter}
+usado está para generar la
+Figura~\ref{Fig:Cap-segmentaciontexto:filterMean-Median.d} está definido
+mediante la ecuación~\ref{Equ:Cap-segmentaciontexto:median}.
+
+\begin{equation}
+	G' = Md \left( N_8(p)~ \bigcup ~p \right), ~\forall p \in G
+	\label{Equ:Cap-segmentaciontexto:median}
+\end{equation}
+
+\begin{figure}[h!]
+	\centering
+  \subfloat[]{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/filtroAdHoc_RGB_FotosCalles_002}\label{Fig:Cap-segmentaciontexto:filterMean-Median.a}} { }
+  \subfloat[]{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/filtroAdHoc_Gray_FotosCalles_002}\label{Fig:Cap-segmentaciontexto:filterMean-Median.b}} \\
+  \subfloat[]{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/filtroMean_FotosCalles_002}\label{Fig:Cap-segmentaciontexto:filterMean-Median.c}} { }
+  \subfloat[]{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/filtroMedian_FotosCalles_002}\label{Fig:Cap-segmentaciontexto:filterMean-Median.d}} \\
+  \caption[Filtros \textit{mean} y \textit{median}]{Filtros \textit{mean} y 
+  \textit{median}. (a) Imagen original. (b) Escala de grises. (c) \textit{Mean
+filter}. (d) \textit{Median filter}}
+	\label{Fig:Cap-segmentaciontexto:filterMean-Median}
+\end{figure}
+
+\section{\textit{Thresholding}}
+Las imágenes en escala de grises que fueron sometidas a la fase de 
+\textit{color filtering} así como también a la fase de \textit{smoothing}
+(Figuras~\ref{Fig:Cap-segmentaciontexto:filterMean-Median.c} y
+\ref{Fig:Cap-segmentaciontexto:filterMean-Median.d}) son binarizadas con el
+objetivo de separar el \textit{foreground} del \textit{background}.
+
+\subsection{\textit{Otsu's method}}
+Este método, que forma parte de las técnicas de \textit{Clustering-based 
+thresholding}, es uno de los más citados en las referencias bibliográficas. La
+Figura~\ref{Fig:Cap-segmentaciontexto:thresholdingA.a} muestra el resultado de
+su aplicación sobre imagen de la
+Figura~\ref{Fig:Cap-segmentaciontexto:thresholdingA.b}.
+
+\subsection{\textit{Niblack's method}}
+A diferencia del método \textit{Otsu}, el método \textit{Niblack} usa valores
+locales de una ventana de tamaño pre-determinado. La
+Figura~\ref{Fig:Cap-segmentaciontexto:thresholdingA.b} es un ejemplo del
+resultado obtenido del método usando una ventana de tamaño $50 \times 50$ y con
+parámetros $k$ y $c$ iguales a $-0.2$ y $10$ respectivamente, estos los valores
+fueron determinados mediante el método de prueba y error.
+
+\begin{figure}[h!]
+	\centering
+	\setlength{\fboxsep}{0pt}
+  \subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/otsu_FotosCalles:002.jpg}\label{Fig:Cap-segmentaciontexto:thresholdingA.a}}} { }
+  \subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/niblack_FotosCalles:002.jpg}\label{Fig:Cap-segmentaciontexto:thresholdingA.b}}} \\
+  \caption[\textit{Otsu and Niblack thresholding}]{\textit{Otsu and Niblack 
+  thresholding}. (a) \textit{Otsu's method}. (b) \textit{Niblack's method}.}
+	\label{Fig:Cap-segmentaciontexto:thresholdingA}
+\end{figure}
+
+\subsection{\textit{Bernsen's method}}
+\textit{Bernsen's method} \cite{Bernsen:1986:DTofGI}, es un método de 
+contraste local que trabaja sobre los valores mínimo y máximo de una (tamaño
+sugerido $31 \times 31$). Si el contraste local es mayor o igual al
+\textit{contrast threshold} (cuyo valor por defecto es $15$), el
+\textit{threshold} tomará el valor del promedio local (la media entre el máximo
+y mínimo valor de los valores de la ventana). Si el \textit{local contrast} es
+menor que el \textit{contrast threshold}, el \textit{pixel} será establecido
+como \textit{background} o \textit{foreground} dependiendo del valor del
+promedio local.
+
+\subsection{\textit{Triangle's method}}
+\textit{Triangle's method} \cite{Zack:1977:AMofSCRF}, es un método geométrico 
+basado en la construcción de una línea entre los valores mínimo y máximo
+expuestos en el histograma para luego iterar entre ese rango y buscar la máxima
+distancia entre la línea y el valor del histograma
+(Figura~\ref{Fig:Cap-segmentaciontexto:triangle}). Aquel valor del histograma
+cuya distancia hacia la línea sea máximo determinará el valor del
+\textit{threshold}.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=8cm]{/Cap:SegmentacionTexto/triangles_method.png}
+  \caption[\textit{Triangle's Thresholding}.]{\textit{Triangle's 
+  Thresholding}}\tiny{Fuente:
+\url{http://www.mif.vu.lt/atpazinimas/dip/FIP/fip-Segmenta.html}}
+	\label{Fig:Cap-segmentaciontexto:triangle}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\setlength{\fboxsep}{0pt}
+  \subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/Bernsen_FotosCalles_002}\label{Fig:Cap-segmentaciontexto:thresholdingB.a}}} { }
+  \subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/Triangle_FotosCalles_002}\label{Fig:Cap-segmentaciontexto:thresholdingB.b}}} \\
+  \caption[\textit{Bernsen and Triangle thresholding}]{\textit{Bernsen and 
+  Triangle thresholding}. (a) \textit{Bernsen's method}. (b) \textit{Triangle's
+method}.}
+	\label{Fig:Cap-segmentaciontexto:thresholdingB}
+\end{figure}
+
+\section{\textit{Merging results from filters}}
+Una vez obtenida una imagen \textit{black and white}, mediante el operador 
+binario \textit{AND} se procede a unir la imagen que resultó del
+\textit{Smoothing Spatial Filter} con el inverso de la imagen obtenida haciendo
+uso del \textit{Thresholding}
+(Figura~\ref{Fig:Cap-segmentaciontexto:resultado-preprocesing}).
+
+\begin{figure}[h]
+	\centering
+%	\setlength{\fboxsep}{0pt}
+  \subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/final_Otsu_FotosCalles_002}\label{Fig:Cap-segmentaciontexto:resultado-preprocesing.a}}} { }
+  \subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:SegmentacionTexto/final_Niblack_FotosCalles_002}\label{Fig:Cap-segmentaciontexto:resultado-preprocesing.b}}} \\
+  \caption[Resultado de la fase de pre-procesamiento]{Resultado de la fase de 
+  pre-procesamiento obtenido de la
+Figura~\ref{Fig:Cap-segmentaciontexto:filterMean-Median.d} (\textit{median
+filter}) con los resultados de: (a) \textit{Otsu's thresholding}. (b)
+\textit{Niblack's thresholding}.}
+	\label{Fig:Cap-segmentaciontexto:resultado-preprocesing}
+\end{figure}
