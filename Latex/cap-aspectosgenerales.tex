@@ -9,12 +9,12 @@
 \subsection{Descripción}
 
 El reconocimiento de texto en imágenes\footnote{Las imágenes se pueden
-clasificar en 2 tipos considerando su origen. \textbf{Gráficos}, aquellas
-imágenes obtenidas a partir de una aplicación de computadora.
-\textbf{Fotografías}, imágenes capturadas mediante un dispositivo electrónico.},
-durante los último años, se fue transformando en uno de los temas más estudiados
+clasificar en dos tipos considerando su origen. \textbf{Gráficos}, aquellas
+imágenes obtenidas a partir de una aplicación de computadora. Y 
+\textbf{fotografías}, imágenes capturadas mediante un dispositivo electrónico.},
+durante los último años se fue transformando en uno de los temas más estudiados
 dentro del área de Reconocimiento de Patrones, debido a que, el texto provee
-información semántica para el entendimiento humano. 
+información semántica para el entendimiento humano. {\color{red} referencia}
 
 Con el avance tecnológico\footnote{Berman \citep{Berman:2003:GCM}, en el 2003,
 realizó un estudio sobre la cantidad de información que se podría generar dentro
@@ -30,14 +30,13 @@ diversas metodologías con desempeños que experimentan cambios favorables o
 adversos según sea el tipo de problema que se enfrente. Del mismo modo, la
 masificación del uso del Internet, ya sea mediante correos electrónicos o redes
 sociales como medios para compartir información, ha logrado que actualmente
-tengamos nuevos problemas para afrontar. %A raiz de ello, nace la necesidad de
-etiquetar, organizar y categorizar la información presente.
+tengamos nuevos problemas para afrontar.
 
 La segmentación de texto representa uno de los pasos más importantes en el
 proceso de reconocimiento en imágenes, debido a que debe lidiar con los
 problemas de tener imágenes con un \textit{background} complejo, especialmente
 en estos días, cuando la tecnología nos provee de múltiples formas para la
-capturar de fotografías y con niveles de resolución que cada día mejoran de
+captura de fotografías y con niveles de resolución que cada día mejoran de
 manera vertiginosa.\footnote{En la actualidad se poseen cámaras fotográficas (no
 profesionales) de 12, 14 y 16 Mpx (Megapíxeles) y se espera que en pocos años se
 cuenten con cámaras de 25 Mpx, pero esto no se dentendrá allí, ya que según
@@ -68,19 +67,26 @@ Ministerial 210-2000 MTC/15.02, documento \citep{MTC:MDCTACC} donde se
 especifican las características que un letrero de señalización debe de cumplir
 para ser puesto en una vía peatonal y/o de tránsito vehicular.}
 
-Esta característica peculiar de los letreros, hace que muchas de las
-aplicaciones de reconocimiento de texto fallen en casos donde el estado de los
-letreros se vea afectado por factores no usuales a los presentados normalmente
-en fotografías de otro naturaleza (placas de automóviles, cubiertas de libros,
-señales de tránsito, anuncios publicitarios).
+Uno de los enfoques, que ultimamente ganó mucho valor, fue aquel presentado en 
+la Conferencia CPVR (Visión Computacional y Reconocimiento de Patrones - 
+\textit{Computer Vision and Pattern Recognition}) del 2010
+\footnote{\url{http://cvl.umiacs.umd.edu/conferences/cvpr2010/}} que obtuvo
+muy buenos resultados bajo \textit{data sets} de competencias de ediciones 
+anteriores. El SWT (\textit{Stroke Width Transform}) obtuvo resultados que 
+variaban conforme a la imagen que se procesaba.
+
+La característica peculiar de los letreros (mencionada anteriormente), hace que 
+muchas de las aplicaciones de reconocimiento de texto fallen en casos donde el 
+estado de los letreros se vea afectado por factores no usuales a los presentados
+normalmente en fotografías de otra naturaleza (placas de automóviles, cubiertas 
+de libros, señales de tránsito, anuncios publicitarios). 
 
 \subsection{Identificación del Problema}
 La tarea de segmentación de texto en fotografías que contienen letreros
 informativos - direccionales de la ciudad de Cusco, hace que los resultados del
-SWT (\textit{Stroke Width Transform}), un enfoque segmentación de texto
-considerado como uno de los mejores, dependan en gran medida de la calidad de la
-imagen y el estado de cada letrero, llegando a fallar en muchos de los casos de
-prueba.
+SWT, un enfoque segmentación de texto considerado como uno de los mejores, 
+dependan en gran medida de la calidad de la imagen y el estado de cada letrero, 
+llegando a fallar en muchos de los casos de prueba.
 
 \section{Antecedentes}
 ``\textbf{Detecting Text in Natural Scenes with Stroke Width Transform}'' Boris
@@ -108,8 +114,8 @@ China, 2012. \cite{li:2012:scene}
 conexas para la detección de texto en imágenes con escenas naturales mediante la
 aplicación del \textit{topological skeleton} como parte de un análisis de
 siluetas en figuras para determinar el \textit{stroke width}.
-	\item El método para agrupar \textit{connected components} no solo agrupa
-caracteres en palabras, sino elimina falsos positivos.
+	\item El método para agrupar componentes conexas no solo agrupa
+caracteres en palabras, sino también, elimina falsos positivos.
 \end{itemize}
 
 ``\textbf{Text Detection Nokia N900 Using Stroke Width Transform}'' Sauvar Kumar
@@ -117,21 +123,22 @@ y Andrew Perrault. Cornell University, Estados Unidos,
 2010.\cite{Saurav:SWT:2010}
 \begin{itemize}
 	\item Se implementa una aplicación móvil para la segmentación de texto
-mediante el enfoque del \textit{Stroke Width Transform} presentando heurísticas
-robustas para el filtrado de \textit{strokes}.
+mediante el enfoque del SWT presentando heurísticas robustas para el filtrado 
+de \textit{strokes} y eliminación de falsos positivos.
 	\item Se presenta una solución al problema de trabajar sobre imágenes con
 texto claro y oscuro en una misma imagen mediante una combinación de resultados
 para ambos casos.
 	\item Son especificadas las reglas heurísticas usadas dentro del proceso de
-filtrado de componentes basados en la distribución de color y la media del
-\textit{stroke}.
+filtrado de componentes basados en la distribución de color y la media aritmética
+del \textit{stroke}.
 \end{itemize}
 
 \section{Objetivos}
   \subsection{Objetivo General}
   Proponer un enfoque para optimizar la segmentación de texto en fotografías que
 contengan letreros informativos - direccionales de las calles de la ciudad de
-Cusco y mejorar los resultados obtenidos por el SWT.
+Cusco haciendo uso del \textit{K-means} y mejorar los resultados obtenidos por 
+el SWT.
   \subsection{Objetivos Específicos}
   \begin{enumerate}
   	\item Recolectar fotografías que contengan letreros informativos -
@@ -144,7 +151,7 @@ texto en imágenes.
   \end{enumerate}
 
 \section{Justificación}
-	Luego de someter el algoritmo SWT para la segmentación de texto bajo un
+	Luego de someter el algoritmo SWT a la tarea de segmentación de texto bajo un
 conjunto de 92 fotografías que contienen letreros informativos - direccionales
 de las calles de Cusco, se obtuvo alredor de un $35\%$ de palabras corréctamente
 segmentadas. Dado que las imágenes pueden ser grandes con respecto a sus
@@ -155,16 +162,17 @@ adecuadas para la tarea de segmentación.
 del tipo de letreros considerados en el problema de investigación.
 
 \section{Alcances}
-  La captura de datos y construcción del \textit{data set} para las fase de
+  La captura de datos y construcción del \textit{data set} para fase de
 entrenamiento y de prueba requeriría capturar imágenes con nombres de calles de
 la ciudad de Cusco. Por la demanda de tiempo que significa todo ese proceso,
-solo se usará un número limitado de elementos para la elaboración del data set.
+solo se usará un número limitado de elementos para la elaboración del 
+\textit{data set}.
 
-  El eje principal del proyecto será el desarrollo de procedimientos que hagan
+  El eje principal del proyecto es el desarrollo de procedimientos que hagan
 posible la segmentación de texto en fotografías que contengan letreros de
 señalización del tipo informativos y/o direccionales. El desarrollo de una
 aplicación final de usuario que tenga en consideración aspectos relacionados a
-interfaces y métodos de entrada, no está considerado como prioritario para el
+interfaces y métodos de entrada, no está considerado como prioritario en el
 presente trabajo.
   
   Pese a que se puede tomar en consideración ciertas condiciones que una
@@ -174,15 +182,14 @@ dificil el proceso de segmentación.
   
 \section{Metodología}
   \subsection{Método de investigación}
-  Dada la naturaleza del trabajo de tesis, se utilizará el método de
+  Dada la naturaleza del trabajo de tesis, se utiliza el método de
 investigación teórica\footnote{Según la clasificación realizada por Elías
 Mejía\citep{Mejia:2005:MIC}.} para un mejor entendimiento de los conceptos
-asociados a la solución del problema planteado. 
-  
-  Los métodos descriptivo y experimental\footnote{De acuerdo a los tipos de
+asociados a la solución del problema planteado. Así como, los métodos 
+descriptivo y experimental\footnote{De acuerdo a los tipos de
 estudio en la investigación descrita en \citep{Hernandez:1999:MI}.} para buscar
 las características que ayuden a mejorar el proceso de segmentación de texto.
-Así como también, la observación y comparación de resultados.
+Finalmente, se hace uso de la observación y comparación de resultados.
 
 \section{Cronograma de actividades}
   \begin{figure}[h!]
