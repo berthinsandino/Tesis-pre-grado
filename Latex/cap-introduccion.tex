@@ -6,42 +6,45 @@
 
 El avance vertiginoso de la Informática permite experimentar algoritmos que 
 antes solo eran enfocados de manera teórica. Las redes bayesianas y los 
-algoritmos evolutivos son algunos ejemplos, donde la complejidad computacional
-era un factor crítico hasta hace unos años. En la actualidad, se realizan
-trabajos basados en dichos algoritmos dejando de lado restricciones en cuanto a
-su complejidad. 
+algoritmos evolutivos son algunos ejemplos donde la complejidad computacional
+era un factor crítico hasta hace unos años. Actualmente, se realizan trabajos 
+basados en dichos algoritmos dejando de lado restricciones en cuanto a
+su complejidad. Sin embargo, como producto del avance tecnológico, el 
+incremento de los medios de comunicación (redes sociales y \textit{blogs}) trajo 
+como consecuencia el hecho de tener una gran cantidad de información. Por 
+ejemplo, las imágenes (en especial las fotografías), son un tipo de información 
+que presentan detalles que solo en algunos casos son tomados en cuenta. Las 
+imágenes satelitales, médicas y militares son solo una muestra de ello donde, 
+la intepretación de ciertas características que presenta la imagen contribuyen 
+al proceso de toma de decisiones.
+%, por ende, se viene desarrollando y mejorando algoritmos que ayuden a una mejor interpretación.
 
-Sin embargo, como producto del avance tecnológico, el incremento de los medios
-de comunicación (redes sociales y \textit{blogs}) trajo como consecuencia mucha
-información. Por ejemplo, las imágenes (en especial las fotografías), son un
-tipo de información que presentan detalles que solo en algunos casos son tomados
-en cuenta. Las imágenes satelitales, médicas y militares son solo una muestra de
-ello donde, la intepretación de ciertas características que presenta la imagen
-contribuyen al proceso de toma de decisiones.%, por ende, se viene desarrollando
-y mejorando algoritmos que ayuden a una mejor interpretación.
-
-El presente trabajo, tiene como punto de interés la segmentación de texto en 
-letreros de señalización (informativos y/o direccionales) de las calles de la
-ciudad de Cusco. En el desarrollo del trabajo de investigación se consideraron
-tres puntos importantes.
-
-El primer punto, comprende una serie de procedimientos de filtrado cuyo objetivo
+Otro ejemplo puede darse con imágenes donde el objetivo principal sea el 
+reconocimiento de texto, como fotografías que contengan letreros con nombres de 
+las calles. Dado que, para el reconocimiento de texto, se hace uso de una fase
+de segmentación para separar aquellos \textit{pixels} que formen parte del texto
+(\textit{foreground}) de los \textit{pixels} que formen parte del 
+\textit{background}. Por lo tanto, para el desarrollo del presente trabajo, se 
+tomó en consideración el problema de la segmentación de texto en letreros de 
+señalización (informativos y/o direccionales) de las calles de la ciudad de Cusco. 
+ 
+Como resultado final, se propone un enfoque el cual se divide en tres etapas. La
+primera etapa, comprende una serie de procedimientos de filtrado cuyo objetivo 
 será descartar regiones de la imagen cuya información no sea relevante para el
 desarrollo del trabajo. Para lo cual, se hará uso de métodos y técnicas de
-procesamiento de imágenes. 
+procesamiento de imágenes. La segunda etapa, tiene como finalidad formar 
+componentes conexas que serán pasadas como parámetro de entrada al algoritmo 
+\textit{k-means clustering}, de esta forma, se podrá disminuir el número de 
+operaciones del \textit{k-means}. Finalmente, la tercera y última etapa hace uso de una 
+serie de reglas heurísticas con la finalidad de filtrar regiones de la imagen 
+formadas en base a un subconjunto de \textit{clusters} (regiones que sean muy 
+poco probables de formar parte del texto).
 
-El segundo punto, tiene como finalidad formar componentes conexas que serán
-pasadas como parámetro de entrada al algoritmo \textit{k-means clustering}, de
-esta forma, se podrá disminuir el número de operaciones del \textit{k-means}.
+Para tal efecto, se vio por conveniente enfocar su desarrollo en tres partes:
 
-El tercer y último punto hace uso de una serie de reglas heurísticas con la 
-finalidad de filtrar regiones de la imagen formada en base a un subconjunto de
-\textit{clusters}, regiones que sean muy poco probables de formar parte del
-texto.
-
-Para tal efecto, se ha visto por conveniente enfocar su desarrollo en tres partes:
 \begin{description}
-	\item[Parte I] Enfocado nétamente a cubrir los aspectos generales.
-  \item[Parte II] Enfocado al marco teórico.
-	\item[Parte III] Desarrollo del enfoque propuesto, conclusiones y recomendaciones.
+	\item[Parte I] Enfocado nétamente a cubrir los aspectos generales del problema.
+  \item[Parte II] Involucra aspectos relacionados al marco teórico.
+	\item[Parte III] Desarrolla el enfoque propuesto, así como las conclusiones y 
+	recomendaciones.
 \end{description}
