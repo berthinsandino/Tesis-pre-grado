@@ -1,0 +1,177 @@
+\chapter{SEGMENTACIÓN DE TEXTO}
+\label{cap-segmentacion}
+
+\setcounter{secnumdepth}{0}
+%\section{Introducción}
+
+Una vez se tenga una imagen que haya sido sometida a la fase de pre-
+procesamiento (Capítulo~\ref{cap-preprocesamiento}), podemos encarar el problema
+ desde otro punto de vista puesto que únicamente se tendrán \textit{pixels} 
+ azules de diferentes tonalidades los cuales deben de ser etiquetados como 
+ \textit{background} o \textit{foreground}.
+
+El presente capítulo, tiene como finalidad presentar el enfoque propuesto para 
+dar solución al problema de segmentación de texto mediante el uso de la 
+estructura de datos \textit{Disjoint-sets} y \textit{K-means clustering}.
+
+\setcounter{secnumdepth}{3}
+\section{\textit{Disjoint-Sets}}
+Una imagen está compuesta por un conjunto de \textit{pixels}. Cada 
+\textit{pixel} puede ser visto como un elemento del conjunto, y un grupo de 
+\textit{pixels} adyacentes que comparten características similares pueden ser
+ representados por una componente.
+
+Dicho esto, dada una imagen como un conjunto de pares ordenados $(x,~y)$ y una 
+función $\varsigma(x,~y)$(\ref{Equ:color}) que representa el color del 
+\textit{pixel} en la posición $P=(x,~y)$.
+\begin{equation}
+	\varsigma:(x,~y) \rightarrow R^w
+	\label{Equ:color}
+\end{equation}
+donde $w$ dependerá del modelo de color que se esté usando, se define la tarea
+ de agrupar varios pixeles adyacentes siempre y cuando estos se encuentren 
+ dentro de un rango establecido de tolerancia de variación con el objetivo de 
+ crear componentes de acuerdo a la cercanía de colores.
+
+Con la finalidad de formar las componentes, para un \textit{pixel} $P$ en la
+ posición $(x,~y)$ es necesario comprobar si sus vecinos ($N_4(p)$) pueden o no
+  formar parte de la misma componente. Para ello, se trabajaría con los pixeles 
+  en las posiciones: $(x,~y - 1)$, $(x - 1,~y), (x + 1,~y), (x,~y + 1)$. Sin 
+  embargo, no es necesario comprobar con todos los vecinos, puesto que, 
+  determinar si la componente en la posición $(x,~y)$ puede o no unirse a la
+   componente $(x,~ y - 1)$, es igual a decir que $(x,~ y - 1)$ compruebe si 
+   $(x,~ (y - 1) + 1)$ puede formar parte de la misma componente; por lo tanto,
+    solo es necesario comprobar con los vecinos $(x,~ y + 1)$ y $(x + 1,~ y)$.
+
+Una forma de determinar si dos componentes adyacentes pueden unirse, es mediante
+ el uso de una función $\delta_{\mathtt{UF}} (\varsigma (C_1), \varsigma (C_2))$
+  (\ref{Eq:distComp}) que calcule la distancia entre los colores de las 
+  componentes. Siendo $C_1$ y $C_2$ serán las posiciones de los pixeles 
+  representativos de cada componente y $\varsigma(C_i)$ indica el color de $C_i$. 
+\begin{equation}
+	\delta_{\mathtt{UF}}:R^3\times R^3 \rightarrow R^h
+	\label{Eq:distComp}
+\end{equation}
+$h$ dependerá de la función $\delta_{\mathtt{UF}}$ que se considere. Si $h=1$, 
+se considerará la distancia de Minkowsky con $p=2$ (\textit{Euclidean 
+distance}), y si $h=3$ se considera la distancia de Minkowski con $p=1$ 
+(\textit{Manhattan distance}).\cite{Cordeiro:2012:Minkowski}
+
+Si el valor es menor o igual a un $\varphi$ pre-definido, se puede afirmar que
+ ambas componentes pueden unirse.
+
+Finalmente, es necesario tomar en cuenta el modelo de color a ser usado, porque 
+se puede encontrar casos donde la representación de los colores sea un problema.
+ En la Figura~\ref{fig:cap-segmentacion:contraejemplo-rgb}, considerando el 
+ modelo RGB se observa una gran variación en el valor de la componente R en los 
+ cuadros de la izquierda y del medio, como también una variación del valor de 
+ la componente B en los cuadros del medio y de la derecha. Por esta razón, el
+  modelo RGB nos limita a establecer un $\varphi$ para cada color (R, G y B) de
+   manera independiente, mientras que, con otro modelo de color, como el HSV se
+    puede limitar cada valor a distintos rangos.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.5]{Cap:Segmentacion/color.eps}
+	\caption{Contra-ejemplo de uso del modelo RGB}
+	\label{fig:cap-segmentacion:contraejemplo-rgb}
+\end{figure}
+
+El algoritmo para formar las componentes dada una imagen de $W\times H$
+ (\textit{width, height}) sería:
+
+\lstinputlisting[caption={Formar componentes}, style=customc, label=alg:formar-componentes]{pseudocodigo/codigo.cod}
+
+\section{\textit{K-means clustering}}
+
+En el problema de segmentación, nuestro objetivo es enfocarnos en agrupar 
+pixeles de tal forma que podamos reducir el rango que cada \textit{pixel} toma 
+como valor. Una vez que se tenga un rango manejable, es factible llevar a cabo 
+cálculos para determinar el color (o colores) del patrón que se esté buscando. 
+De modo que, cada \textit{pixel} es clasificado de acuerdo a las características 
+de color que posee sin considerar restricciones de localización, o algún otro 
+tipo de ajuste de parámetro como en los enfoques supervisados.
+
+En el caso de la segmentación de texto, este método es independiente al 
+lenguaje; el tipo, tamaño, y estilo de la fuente; y no recibe influencia 
+negativa de \textit{pixels} adyacentes. Sin embargo, esta última característica
+ puede o no cumplirse satisfactoriamente debido a la agrupación de componentes 
+ que se realizó con el Algoritmo~\ref{alg:formar-componentes}. En gran medida 
+ dependerá del valor $\varphi$ y la función $\delta_{\mathtt{UF}}$ que se 
+ definan.
+
+De este modo, el algoritmo sería el siguiente:
+\lstinputlisting[caption=K-means, style=customc, label=alg:k-means]{pseudocodigo/codigo2.cod}
+donde  $S_k$ es el subconjunto de todos los índices de las componentes asignadas
+ al \textit{cluster} $k$ y $\mu_k$ representa la posición del centroide del 
+ $k$-ésimo \textit{cluster}.
+
+Hasta este punto, se pueden formar $K$ \textit{clusters} a partir de un conjunto 
+de datos. Al momento de usar DS con la finalidad de reducir el número de datos 
+iniciales, se presenta un problema porque dentro del algoritmo para designar los 
+nuevos centroides (\texttt{\color{gray} línea 7}, Algoritmo~\ref{alg:k-means}) 
+se toma en consideración el número de puntos que fueron asignados al $i-$ésimo 
+\textit{cluster}. Mientras que, al trabajar con los resultados del DS solo se
+ consideraría el número de componentes. La 
+ Figura~\ref{fig:cap-segmentacion:diferentes-resultadosKM.a} presenta una 
+ configuración de puntos sobre los cuales se obtienen 3 \textit{clusters},
+  mientras que las Figuras~\ref{fig:cap-segmentacion:diferentes-resultadosKM.b}, 
+  \ref{fig:cap-segmentacion:diferentes-resultadosKM.c} y 
+  \ref{fig:cap-segmentacion:diferentes-resultadosKM.d} muestran 3 diferentes 
+  salidas del KM donde ya no reciben la totalidad de puntos, si no un conjunto 
+  reducido que estaría conformado por los puntos representativos de las 
+  componentes obtenidas del DS.
+
+\begin{figure}[h!]
+	\centering
+	\setlength{\fboxsep}{0pt}
+	\subfloat[]{\fbox{\includegraphics[scale=0.5]{Cap:Segmentacion/kmeans02}\label{fig:cap-segmentacion:diferentes-resultadosKM.a}}} { }
+	\subfloat[]{\fbox{\includegraphics[scale=0.5]{Cap:Segmentacion/kmeans03}\label{fig:cap-segmentacion:diferentes-resultadosKM.b}}}	
+	\\
+	\subfloat[]{\fbox{\includegraphics[scale=0.5]{Cap:Segmentacion/kmeans04}\label{fig:cap-segmentacion:diferentes-resultadosKM.c}}} { }
+	\subfloat[]{\fbox{\includegraphics[scale=0.5]{Cap:Segmentacion/kmeans05}\label{fig:cap-segmentacion:diferentes-resultadosKM.d}}}	
+	\caption{Diferentes resultados \textit{local optimum} del KM.}
+	\label{fig:cap-segmentacion:diferentes-resultadosKM}
+\end{figure}
+
+Suponiendo que se trabaje con 5 puntos $(P_1, P_2, \dots, P_5)$ que pertenecen a
+ un \textit{cluster} $k$, mediante el Algoritmo~\ref{alg:formar-componentes} se
+  obtienen 2 componentes $C_1$ y $C_2$ conformadas por los puntos
+   $\lbrace{P_1, P_2, P_3}\rbrace$ y $\lbrace P_4, P_5\rbrace$ respectivamente.
+    Al tratar de formar los \textit{clusters}, la primera parte del 
+    Algoritmo~\ref{alg:k-means} (\texttt{\color{gray}líneas 5 y 6}) no se verá 
+    afectada  por la condición de cercanía para formar las componentes en el DS;
+     mientras que, la segunda parte (\texttt{\color{gray}línea 8}) el valor 
+     $u_k = \frac{C_1+C_2}{2}$ sería considerado en lugar del original 
+     $u_k = \frac{P_1 + P_2 + \dots + P_5}{5}$. Para corregir este hecho, se 
+     hace uso de un artificio para tener lo siguiente:
+$\displaystyle u_k = \frac{3\times \frac{P_1 + P_2 + P_3}{3} + 2\times \frac{P_4 + P_5}{2}}{5}$. Si $\widehat{C_i}$ 
+fuera igual la media aritmética de todos los puntos $P_j$ que pertenecen a la
+ componente $i$, se obtiene: 
+$u_k = \frac{3\times \widehat{C_1} + 2\times \widehat{C_2}}{5}$. 
+Entonces, modificando la \texttt{\color{gray} línea 7} del 
+Algoritmo~\ref{alg:k-means} por la ecuación~\ref{equ:k-means:improved} se evita 
+que el resultado final sufra variaciones drásticas a causa de las componentes 
+formadas.
+\begin{equation}
+\mu_\text{k}  =  \sum_{i \in S_k}^{}{\frac{|C_i| \times \widehat{C_i}}{Q}}
+\label{equ:k-means:improved}
+\end{equation}
+siendo $\displaystyle Q = \sum_{i \in S_k}^{}{|C_i|}$.
+
+Una característica final que se puede aprovechar, es el número de componentes
+ $c'$ obtenidas del Algoritmo~\ref{alg:formar-componentes}. Considerando el 
+ objetivo del KM, definido mediante la ecuación~\ref{equ:k-means:J} cuya
+  finalidad es buscar un resultado que sea un óptimo local con respecto a una 
+  función de distorsión $J(c_1, c_2, \dots, c_{c'}, \mu_1, \mu_2, \dots, \mu_K)$.
+\begin{equation}
+\min \big( \sum_{i=1}^{K}{\sum_{j \in S_i}^{} {\delta_{\mathtt{k-means}}(\varsigma(P_j), ~\varsigma(\mu _i}))} \big)
+\label{equ:k-means:J}
+\end{equation}
+
+Se puede correr el Algoritmo~\ref{alg:k-means} $t$ veces de forma que, en cada
+ iteración se calcule el valor de $J$ y al final solo quedaría escoger la
+  configuración de \textit{clusters} con el menor valor de $J$ 
+  (Algoritmo~\ref{cost-function}). 
+
+\lstinputlisting[caption=K-means\_Cost Function, style=customc, label=cost-function]{pseudocodigo/codigo3.cod}
