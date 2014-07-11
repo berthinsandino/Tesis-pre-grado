@@ -1,0 +1,193 @@
+%% ------------------------------------------------------------------------- %%
+\chapter{ASPECTOS GENERALES}
+\label{cap:aspectosGenerales}
+%% ------------------------------------------------------------------------- %%
+\setcounter{secnumdepth}{0}
+
+\setcounter{secnumdepth}{3}
+\section{Planteamiento del Problema}
+\subsection{Descripción}
+
+El reconocimiento de texto en imágenes\footnote{Las imágenes se pueden
+clasificar en 2 tipos considerando su origen. \textbf{Gráficos}, aquellas
+imágenes obtenidas a partir de una aplicación de computadora.
+\textbf{Fotografías}, imágenes capturadas mediante un dispositivo electrónico.},
+durante los último años, se fue transformando en uno de los temas más estudiados
+dentro del área de Reconocimiento de Patrones, debido a que, el texto provee
+información semántica para el entendimiento humano. 
+
+Con el avance tecnológico\footnote{Berman \citep{Berman:2003:GCM}, en el 2003,
+realizó un estudio sobre la cantidad de información que se podría generar dentro
+de los próximos 10 años. Considerando únicamente información de carácter
+científico (obtenida de satelitales, radares, y escáneres médicos), se
+produciría entre 100 \textit{Terabytes} ($10^{12}$ \textit{bytes}) a 10
+\textit{Petabytes} ($10^{15}$ \textit{bytes}) por año. Por otra parte, en el
+2013, Eric Schmidt CEO (\textit{Chief Executive Officer}) de Google, el más
+grande indexador de Internet, estimó que el tamaño de información estaría
+bordeando los 5 millones de \textit{Terabytes} \citep{McGuigan:2013:HBI}.} nace
+la necesidad de digitalizar la información, lo cual ha llevado a desarrollar
+diversas metodologías con desempeños que experimentan cambios favorables o
+adversos según sea el tipo de problema que se enfrente. Del mismo modo, la
+masificación del uso del Internet, ya sea mediante correos electrónicos o redes
+sociales como medios para compartir información, ha logrado que actualmente
+tengamos nuevos problemas para afrontar. %A raiz de ello, nace la necesidad de
+etiquetar, organizar y categorizar la información presente.
+
+La segmentación de texto representa uno de los pasos más importantes en el
+proceso de reconocimiento en imágenes, debido a que debe lidiar con los
+problemas de tener imágenes con un \textit{background} complejo, especialmente
+en estos días, cuando la tecnología nos provee de múltiples formas para la
+capturar de fotografías y con niveles de resolución que cada día mejoran de
+manera vertiginosa.\footnote{En la actualidad se poseen cámaras fotográficas (no
+profesionales) de 12, 14 y 16 Mpx (Megapíxeles) y se espera que en pocos años se
+cuenten con cámaras de 25 Mpx, pero esto no se dentendrá allí, ya que según
+estimaciones, el ojo humano cuenta con una resolución mayor a 500 Mpx. Muchas
+imágenes digitales usan 24 \textit{bits} por cada \textit{pixel}, sin embargo,
+se cuenta con cámaras que usan 36 \textit{bits} y si tomamos en cuenta la Ley de
+Moore \citep{Moore:1965:CCIC}, en unos años tendremos cámaras que soporten 48 y
+luego 96 \textit{bits} \citep{Myhrvold:2006:MLCPP}.}
+
+En la ciudad de Cusco, uno de los lugares más turísticos del Perú, se tienen
+distribuidos a lo largo de sus calles letreros informativos - direccionales con
+una característica muy peculiar, están formados por baldosas de cerámica.
+
+Luego de la influencia de la cultura Europea, muchos nombres de las calles de la
+ciudad de Cusco fueron modificados dejándo de lado los nombres quechua
+originales.\footnote{Los cuales almacenaban información relacionada al día a día
+de los inkas, así como, información al respecto de los lugares.} Recién, a
+partir de 1993 ---durante el gobierno edil del Dr. Daniel Estrada Perez---, como
+parte de una campaña para rescatar la identidad local e historia de nuestra
+cultura,  se oficializó la recuperación de los nombres antiguos de las calles de
+la ciudad de Cusco. La Municipalidad Provincial de Cusco conjuntamente con la
+Gerencia del Ministerio de Transportes y Comunicaciones, fueron colocando
+letreros de señalización y/o información, muchos de ellos sobre baldosas de
+cerámica.\footnote{Letreros que se rigen al ``Manual de Dispositivos de Control
+del Tránsito Automotor en Calles y Carreteras'' (aprobado por Resolución
+Ministerial N.413-93-TCC/15.01), el cual fue actualizado conforme la Resolución
+Ministerial 210-2000 MTC/15.02, documento \citep{MTC:MDCTACC} donde se
+especifican las características que un letrero de señalización debe de cumplir
+para ser puesto en una vía peatonal y/o de tránsito vehicular.}
+
+Esta característica peculiar de los letreros, hace que muchas de las
+aplicaciones de reconocimiento de texto fallen en casos donde el estado de los
+letreros se vea afectado por factores no usuales a los presentados normalmente
+en fotografías de otro naturaleza (placas de automóviles, cubiertas de libros,
+señales de tránsito, anuncios publicitarios).
+
+\subsection{Identificación del Problema}
+La tarea de segmentación de texto en fotografías que contienen letreros
+informativos - direccionales de la ciudad de Cusco, hace que los resultados del
+SWT (\textit{Stroke Width Transform}), un enfoque segmentación de texto
+considerado como uno de los mejores, dependan en gran medida de la calidad de la
+imagen y el estado de cada letrero, llegando a fallar en muchos de los casos de
+prueba.
+
+\section{Antecedentes}
+``\textbf{Detecting Text in Natural Scenes with Stroke Width Transform}'' Boris
+Epshtein, Eyal Ofek, Yonatan Wexler. Microsoft Corporation,
+2010.\cite{Epshtein:SWT:2010}
+\begin{itemize}
+	\item En el trabajo, se muestra una técnica para incrementar los resultados
+bajo la idea de \textit{stroke width} para la detección de texto.
+	\item Se define la noción de \textit{stroke} y se deriva a un algoritmo
+eficiente para calcularlo, produciéndose una nueva característica
+(\textit{feature}) para la imagen. La nueva característica provee información
+importante que fue demostrada para la detección de texto.
+	\item El SWT (\textit{Stroke Width Transform}) combina estimaciones sobre cada
+\textit{pixel} con método no locales de procesamiento de imágenes.
+	\item Durante la fase de análisis de resultados, el algoritmo alcanzó el
+primer lugar ejecutándose 15 veces más rapido que los otros algoritmos
+reportados.
+\end{itemize}
+
+``\textbf{Scene Text Detection via Stroke Width}'' Yao Li y Huchuan Lu. School
+of Information and Communication Engineering, Dalian University of Technology,
+China, 2012. \cite{li:2012:scene}
+\begin{itemize}
+	\item En el trabajo, se presenta una nueva metodología basada en componentes
+conexas para la detección de texto en imágenes con escenas naturales mediante la
+aplicación del \textit{topological skeleton} como parte de un análisis de
+siluetas en figuras para determinar el \textit{stroke width}.
+	\item El método para agrupar \textit{connected components} no solo agrupa
+caracteres en palabras, sino elimina falsos positivos.
+\end{itemize}
+
+``\textbf{Text Detection Nokia N900 Using Stroke Width Transform}'' Sauvar Kumar
+y Andrew Perrault. Cornell University, Estados Unidos,
+2010.\cite{Saurav:SWT:2010}
+\begin{itemize}
+	\item Se implementa una aplicación móvil para la segmentación de texto
+mediante el enfoque del \textit{Stroke Width Transform} presentando heurísticas
+robustas para el filtrado de \textit{strokes}.
+	\item Se presenta una solución al problema de trabajar sobre imágenes con
+texto claro y oscuro en una misma imagen mediante una combinación de resultados
+para ambos casos.
+	\item Son especificadas las reglas heurísticas usadas dentro del proceso de
+filtrado de componentes basados en la distribución de color y la media del
+\textit{stroke}.
+\end{itemize}
+
+\section{Objetivos}
+  \subsection{Objetivo General}
+  Proponer un enfoque para optimizar la segmentación de texto en fotografías que
+contengan letreros informativos - direccionales de las calles de la ciudad de
+Cusco y mejorar los resultados obtenidos por el SWT.
+  \subsection{Objetivos Específicos}
+  \begin{enumerate}
+  	\item Recolectar fotografías que contengan letreros informativos -
+direccionales de las calles de la ciudad de Cusco.
+    \item Investigar e implementar operaciones de transformación sobre imágenes
+para su procesamiento.
+    \item Investigar e implementar algoritmos para el proceso de segmentación de
+texto en imágenes.
+    \item Analizar y comparar los resultados obtenidos con el SWT.
+  \end{enumerate}
+
+\section{Justificación}
+	Luego de someter el algoritmo SWT para la segmentación de texto bajo un
+conjunto de 92 fotografías que contienen letreros informativos - direccionales
+de las calles de Cusco, se obtuvo alredor de un $35\%$ de palabras corréctamente
+segmentadas. Dado que las imágenes pueden ser grandes con respecto a sus
+dimensiones, enfoques que desplacen ventanas por toda la imagen no son las más
+adecuadas para la tarea de segmentación. 
+ 
+	Por otra parte, no se cuenta con un algoritmo específico para la segmentación
+del tipo de letreros considerados en el problema de investigación.
+
+\section{Alcances}
+  La captura de datos y construcción del \textit{data set} para las fase de
+entrenamiento y de prueba requeriría capturar imágenes con nombres de calles de
+la ciudad de Cusco. Por la demanda de tiempo que significa todo ese proceso,
+solo se usará un número limitado de elementos para la elaboración del data set.
+
+  El eje principal del proyecto será el desarrollo de procedimientos que hagan
+posible la segmentación de texto en fotografías que contengan letreros de
+señalización del tipo informativos y/o direccionales. El desarrollo de una
+aplicación final de usuario que tenga en consideración aspectos relacionados a
+interfaces y métodos de entrada, no está considerado como prioritario para el
+presente trabajo.
+  
+  Pese a que se puede tomar en consideración ciertas condiciones que una
+fotografía debería de cumplir para ser procesada, el interés del proyecto es la
+segmentación de texto en imágenes influenciados bajo diversos factores que hagan
+dificil el proceso de segmentación.
+  
+\section{Metodología}
+  \subsection{Método de investigación}
+  Dada la naturaleza del trabajo de tesis, se utilizará el método de
+investigación teórica\footnote{Según la clasificación realizada por Elías
+Mejía\citep{Mejia:2005:MIC}.} para un mejor entendimiento de los conceptos
+asociados a la solución del problema planteado. 
+  
+  Los métodos descriptivo y experimental\footnote{De acuerdo a los tipos de
+estudio en la investigación descrita en \citep{Hernandez:1999:MI}.} para buscar
+las características que ayuden a mejorar el proceso de segmentación de texto.
+Así como también, la observación y comparación de resultados.
+
+\section{Cronograma de actividades}
+  \begin{figure}[h!]
+    \centering
+	  \includegraphics[angle=90, scale=0.8]{/Cap:AspectosGenerales/cronograma}
+	  \caption{Cronograma de actividades}
+	  \label{Fig:Cap:AspectosGenerales:Cronograma}
+	\end{figure}
