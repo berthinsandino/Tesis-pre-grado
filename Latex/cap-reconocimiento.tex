@@ -1,0 +1,238 @@
+\chapter{SEGMENTACIÓN Y RECONOCIMIENTO DE TEXTO EN IMÁGENES}
+\label{cap-reconocimiento}
+\setcounter{secnumdepth}{0}
+interés y de mayor importancia debido a que la tercer fase (de reconocimiento)
+dependerá críticamente de los resultados que se hayan obtenido préviamente. El
+diagrama de flujo bajo el cual se desarrollará el enfoque propuesto se puede
+observar en la Figura~\ref{fig:workflow}.
+
+Durante los últimos años, varios trabajos relacionados al área de RTI
+(Reconocimiento de Texto en Imágenes) fueron presentados usando diversos
+enfoques y metodologías. La gran mayoría basado en técnicas supervisadas y no
+supervisadas debido a que estos presentaron buenos resultados.% positivos.
+
+El problema de RTI está enfocado en el desarrollo de cuatro fases
+(Figura~\ref{fig:cap-reconocimiento:workflowtodo}), las cuales son:
+\begin{itemize}
+	\item La primera fase (pre-procesamiento), donde se llevan a cabo una serie de
+operaciones con la finalidad de mejorar o eliminar ciertas propiedades
+presentadas en la imagen.
+	\item La segunda fase (segmentación de texto), tiene el objetivo de eliminar
+los \textit{pixels} que formen parte del \textit{background} de la imagen.
+	\item La tercera fase (segmentación de caracteres), forma regiones cuyos
+\textit{pixels} solo forman parte de un carácter.
+	\item Finalmente, la última fase (reconocimiento de caracteres), trabaja sobre
+cada carácter y como resultado, se obtiene un conjunto de valores que
+representan las probabilidades en ser identificado como un determinado carácter
+ASCII.
+\end{itemize}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[height=15cm]{Cap:Reconocimiento/workflow_Reconocimiento}
+	\caption{Diagrama de flujo para proceso de RTI.}
+	\label{fig:cap-reconocimiento:workflowtodo}
+\end{figure}
+
+A continuación, se presenta un resumen de los \textit{papers} en los cuales está
+basado el enfoque propuesto. Se consideró abordar el problema de reconocimiento
+de texto en imágenes, así como el problema de reconocimiento de texto en placas
+de automóviles por presentar algunas similitudes con respecto al trabajo de
+tesis.%considerarse como un problema parecido al presentado en el presente
+documento.
+
+\setcounter{secnumdepth}{3}
+\section{Trabajos relacionados}
+\subsection{Reconocimiento de texto en imágenes}
+
+Misra~\textit{et al.}~\cite{Misra:2012:TEandR}, tiene como punto de interés la
+segmentación de texto de imágenes con un \textit{background} complejo. Se adopta
+el enfoque de \textit{color space reduction} usando el modelo de color HSV que a
+diferencia del modelo RGB, el modelo HSV no asocia la intensidad o luminosidad a
+cada componente como se hace en el RGB. En una imagen \textit{true color}, la
+componente H es dominante con respecto a V como en una imagen \textit{gray
+color}, de esta forma se puede considerar los valores de H o V para el
+\textit{color space
+reduction}~(Figura~\ref{Fig:cap-reconocimiento:HSV-colorreduction}).
+
+\begin{figure}[h!]
+	\centering
+	\subfloat[]{\includegraphics[width=7cm]{Cap:Reconocimiento/HSV_color_reduction_ori}} { }
+	\subfloat[]{\includegraphics[width=7cm]{Cap:Reconocimiento/HSV_color_reduction_pro}} \\  
+	\caption[\textit{HSV color reduction}]{\textit{HSV color reduction}. (a)Imagen
+original. (b)\textit{HSV based color reduced image}.}\tiny{Fuente: Text
+Extraction and Recognition from Image using Neural Network
+	\cite{Misra:2012:TEandR}}
+	\label{Fig:cap-reconocimiento:HSV-colorreduction}
+\end{figure}
+
+A partir de la imagen procesada, se procede a identificar Regiones de Interés
+~(ROIs - \textit{Regions Of Interes}) --- aunque no se detalla el proceso que se
+sigue para dicha identificación--- que serán binarizadas con el objetivo de
+extraer \textit{features} que serán usados como \textit{input} de una NN cuya
+tarea es descartar aquellos ROIs que no contengan texto. Se consideraron diez
+\textit{features}, dentro de los cuales los más importantes son:
+\begin{itemize}
+	\item \textit{Aspect ratio}, se limita la razón entre la anchura y altura de
+un ROI a un rango comprendido en el intérvalo cerrado $[0.18, ~2.0]$.
+	\item \textit{Contrast change per unite length}, usualmente, para una mejor
+visibilidad, el color del texto \textit{foreground} contiene un alto contraste a
+comparación del \textit{background}. A raiz de ello, se realiza un barrido
+horizontal para contar el número de cambios de contraste encontrados en un ROI.
+	\item \textit{Inter character gap}, debido a que, en una palabra contiene
+espacios para separar cada carácter el número de espacios es directamente
+proporcional a la anchura e inversamente proporcional a la altura del ROI. Por
+ello, se aplica la técnica llamada \textit{vertical projection profile
+analysis}~\cite{DIP:2008:RinBI} con el objetivo contar el número de espacios
+contenidos en el ROI.
+\end{itemize}
+
+Luego de obtener los \textit{features}, se usa el método \textit{Singular Value
+Decomposition}~(SVD)~\cite{SVD:web} sobre el \textit{training data set} para
+seleccionar el \textit{feature set} óptimo que será usado en un
+\textit{Multi-layer perceptron (MLP)} de 7 entradas, un \textit{hidden layer} de
+10 unidades y una salida, con la finalidad de clasificar cada ROI como ``texto''
+o ``no-texto''. Luego se utiliza el algoritmo \textit{back propagation} para
+entrenar la NN hasta que el \textit{Mean Squared Error (MSE)} \footnote{El
+cuadrado del promedio de la diferencia entre las salidas de la NN y del
+\textit{training data set}.} sea menor que $10^{-3}$ alcanzando un máximo de
+70,000 \textit{epochs}\footnote{El número de veces que el \textit{training set}
+es usado para entrenar la NN.}.
+
+Li \textit{et al.}~\cite{Li:2010:CRFforTS}, plantea el uso de un modelo basado
+en Campos Aleatorios Condicionales (CRF - \textit{Conditional Random Fields})
+haciendo uso de \textit{local visual information}\footnote{Información obtenida
+de cada \textit{pixel} (color y textura).} y \textit{contextual label
+information}\footnote{Referido a la información obtenida de los \textit{pixels}
+cercanos.} considerando los siguientes \textit{features}:
+\begin{itemize}
+	\item Las componentes del modelo de RGB así como el valor del \textit{pixel}
+en escala de grises.
+	\item Seis \textit{features} obtenidos a partir del filtro Gabor.
+	\item Valores extraidos de un análisis contextual haciendo uso de un MLP la
+cual indicará la probabilidad que tiene un \textit{pixel} de ser considerado
+como ``texto'' o ``no texto'' partiendo de la condición de que \textit{pixels}
+vecinos que forman parte de un caracter tienden a compartir una distribución de
+probabilidad similar.
+\end{itemize}
+
+Todos estos \textit{features} son pasados como entrada a un CRF encargado del
+proceso de segmentación de texto.
+
+Song \textit{et al.}~\cite{Song:2008:ITEbasedKMC}, dentro de los enfoques no
+supervisados, propone el uso del \textit{K-means clustering} basándose en las
+componentes del modelo de color. Debido a que, cada \textit{pixel} es
+clasificado por características de las componentes que forman parte del modelo
+de color, no se toma en cuenta la influencia de \textit{pixels} vecinos,
+evitando así la influencia negativa que puedan ejercer en el resultado final. El
+uso del KM significa un proceso universal: independiente del tamaño, lenguaje o
+tipo de fuente; así como, independiente de fases previas de entrenamiento, las
+cuales son usadas para establecer valores a los parámetros usados en los modelos
+supervisados. El primer paso, dentro de éste enfoque propuesto, se centra en la
+localización de texto, para lo cual se trabaja con tres imágenes de dimensiones
+$[1/2 x, 1x, 2x]$ con respecto a la imagen original. Cada imagen es binarizada y
+sometida al filtro Sobel. A raiz de ello, se forma una nueva imagen desplazando
+una ventana de $4 \times 4$ (la cual es dividida en 4 partes:
+superior-izquierda, superior-derecha, inferior-izquierda e inferior-derecha) con
+el objetivo filtar aquellas partes que no contengan ningún \textit{pixel} en
+todas las partes de la ventana. Luego, se forman componentes a partir de la
+imágen resultado de la unión de los resultados de las tres imágenes que fueron
+unidas mediante el operador binario \textit{OR}. Cada componente es analizada
+haciendo uso del \textit{vertical projection} y \textit{horizontal projection},
+dejando regiones compuestas que posiblemente sean texto. Para cada región se usa
+el KM~(número de \textit{clusters} igual a $3$) con el objetivo de segmentar el
+texto (\textit{foreground}) del \textit{background}. Finalmente, la decisión por
+el \textit{cluster} que representa el color del texto está basada en el
+contraste que hay entre el \textit{background} y el \textit{foreground}, dejando
+como posibles candidatos los colores de valor más alto (o más bajo) en escala de
+grises.
+
+\subsection{Reconocimiento de placas de automóviles}
+
+Chen \textit{et al.}~\cite{Chen:2009:LPTLusingDWT}, propone el uso de la
+Transformada Discreta de Wavelet (DWT - \textit{Discrete Wavelet
+Transform})~\cite{Heil:1989:C&DWT, Burrus:1998:ItoW} porque los coeficientes de
+la transformada proveen información importante relacionada a las regiones donde
+se encuentra el texto. Al usar la DWT, se busca detectar tres tipos de bordes en
+una imagen a color que estarán en las sub-bandas formadas. A partir de cada
+sub-banda, se extraen los \textit{features} que serán usados como \textit{input}
+para una \textit{Back Propagation} NN cuyo objetivo será filtrar regiones que
+contengan caracteres. Cada región estará compuesta por tres tipos de bordes,
+para obtenerlos se aplica nuevamente la DWT sobre estas regiones y se someten a
+un proceso de dilatación de bordes~\cite{Dil:web}, para luego unir las
+sub-bandas mediante el operador lógico \textit{AND} y así tener una imagen que
+contenga el texto segmentado.\footnote{A pesar del bajo costo en las operaciones
+empleadas, no se detalla el proceso para la extracción de \textit{features} que
+serán usados en la NN.}
+
+Tatiane, en su disertación de maestría~\cite{Tatiane:2001:RCAP}, busca mejorar
+el sistema SIAV~(Sistema de Identificación Automática de Vehículos) incorporando
+una serie de pasos en la fase de pre-procesamiento de la imagen. Mediante una
+muestra de $450$ fotografías, se determinan los estadísticos $\mu$ y $\sigma$
+considerando como variables aleatórias los valores de la média de las
+coordenadas superior-izquierda e inferior-derecha de las placas de cada imagen
+de la muestra con el objetivo de reducir el área donde se llevará a cabo el
+proceso de búsqueda en un $60\%$. La nueva imagen es sometida a un proceso de
+ecualización por histograma~\cite{Marques:1999:Equalizacao} para mejorarla sin
+alterar la proporción de contraste entre los \textit{pixels}. También se usa un
+filtro morfológico para modificar la apariencia de la imagen a través de la
+compresión del intérvalo de brillo y realce de contraste simultáneo.\footnote{El
+cual no se especifica.} Finalmente, las imágenes con poco contraste son
+sometidas al filtro \textit{Butterworth}~\cite[pág. 306]{Gonzalez:2002:DIP} para
+que, seguidamente, las imágenes sean segmentadas y pasadas como entrada a un NN
+(empleada para el proceso de reconocimiento de caracteres). La NN es del tipo
+\textit{feed-forward} que usó el método \textit{back propagation} durante la
+fase de entrenamiento.
+
+Wanniarachi \textit{et al.}~\cite{Wanniarachchi:2007:LPIbasedIPT}, busca
+afrontar el problema de detección y reconocimiento de las placas de automóviles
+a través de un enfoque no muy complicado declarando las siguiente
+pre-condiciones sobre las imágenes que procesará:
+\begin{itemize}
+	\item La distancia entre el instrumento de captura de imagenes y la parte
+posterior del automóvil estará entre los valores de 3 y 5 metros.
+	\item El formato que siguen las placas de automóviles en \textit{Sri
+Lanka}\footnote{República Democrática Socialista de Sri Lanka, país insular
+ubicado al sureste de India en Asia.} es letras en negro con un
+\textit{background} de color blanco para la parte anterior y amarillo en la
+parte posterior del automóvil.
+\end{itemize}
+
+Como las regiones que se buscan son sectores rectangulares de color amarillo,
+las fotografías del \textit{data set} son sometidas a un filtro donde se dejan
+pasar únicamente aquellos \textit{pixels} cuyo valor RGB esté dentro del rango:
+$[130, ~255 ]$ para R, $[80, ~255 ]$ para G y $[0, ~85 ]$ para B. Luego, se
+aplica el algoritmo  de detección de lados Canny sobre la nueva imagen; y por
+último, se usa un filtro morfológico de dilatación (usando una estructura en
+forma de diamante). Sobre los resultados del filtro, se usa el algoritmo
+Floyd-fill~\cite{Floyd:web} para pintar todas las regiones rectangulares, de
+esta forma se obtienen las coordenadas donde posiblemente se ubique la placa del
+automóvil. Cada región rectangular obtenida es redimensionada a un tamaño de
+$100 \times 130$ y alineada --- para evitar trabajar con regiones inclinadas.
+Las nuevas regiones son divididas mediante el enfoque \textit{vertical
+projection} y sometidas a un NN para el reconocimiento de caracteres.
+
+Kwaśnicka \textit{et al.}~\cite{Kwasnicka:2002:LPLandR}, presenta una solución
+al problema de búsqueda y reconocimiento de caracteres para cualquier tipo de
+placas de automóviles bajo diversas condiciones ambientales que puedan influir
+en la captura de la imagen. Algunos de los factores considerados como negativos
+son: condiciones climáticas, condiciones de luminocidad, localización de la
+placa, movimiento del vehículo, daños mecánicos en las placas y etiquetas o
+grabados dentro de la placa. Por todo ello, un análisis usando los colores no
+brindaría buenos resultados, especialmente debido a que el color de la placa
+puede variar, por lo que se opta trabajar bajo el contraste tomando en
+consideración la diferencia de brillo o color entre el \textit{background} y los
+caracteres de una placa de automóvil. El modelo de color considerado dentro de
+la fase de localización será el YUV\cite{YUV:web}, donde únicamente se trabajará
+sobre el valor de la luminancia. Se hace uso de un \textit{threshold} para
+incrementar el contraste entre los caracteres y el \textit{background}. El
+resultado es sometido a un filtro cuyo objetivo es analizar cada \textit{pixel}
+dejando sólo aquellos que sean candidatos a pertenecer al contorno de algún
+segmento de la imagen. Luego, se forman componentes con los \textit{pixels}
+sobrantes para usar siete heurísticas\footnote{Las reglas usadas tienen que ver
+con razones entre el ancho y alto de las componentes.} y eliminar aquellas
+componentes que no sean probables de ser parte de la placa. Las componentes
+sobrantes son segmentadas en caracteres mediante el análisis de \textit{vertical
+projection}. Cada carácter es pasado como entrada a un NN, y finalmente,
+mediante un análisis sintáctico se eliminan los falsos positivos (regiones que
+hayan sido consideradas como caracteres sin ser caracteres).
