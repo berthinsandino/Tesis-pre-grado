@@ -1,0 +1,60 @@
+\chapter{ASPECTOS DEL ENFOQUE}
+\label{cap-aspectosenfoque}
+%\section{Segmentación de texto}
+\setcounter{secnumdepth}{0}
+%\section{Introducción}
+
+La segmentación de texto en imágenes implica separar los \textit{pixels} 
+pertenecientes al texto del los \textit{pixels} que forman parte del
+\textit{background}, este proceso representa una parte crítica en cualquier
+módulo de reconocimiento de texto.
+
+El presente trabajo, se encuentra centrado en el problema de segmentación 
+dejando de lado la fase de reconocimiento de texto para trabajos futuros.
+
+\setcounter{secnumdepth}{3}
+\section{Enfoque propuesto}
+
+El problema de segmentación será abordado en tres fases (Figura~\ref{fig:cap-reconocimiento:workflowenfoque}):
+\begin{itemize}
+	\item La primera fase llevará a cabo procesos que filtren características
+	que no nos sean útiles.
+	\item La segunda fase llevará a cabo el proceso de segmentación así como 
+	localización eliminando aquellas regiones que no formen parte del texto.
+	\item La tercera fase será la encarga de filtrar componentes falsos 
+	positivos.
+\end{itemize}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[height=15cm]{Cap:Reconocimiento/workflow_propuesta2}
+	\caption{Enfoque propuesto}
+	\label{fig:cap-reconocimiento:workflowenfoque}
+\end{figure}
+
+Durante la fase de segmentación de texto, la fotografía será sometida a una
+serie de filtros con el objetivo de eliminar regiones cuya información no sea
+relevante para nuestro objetivo. Dado que, el punto de interés es la
+segmentación de texto ubicado dentro de los letreros informativos -
+direccionales. Se considerarán características que ayuden a reducir las áreas 
+de búsqueda. 
+
+El objetivo del uso de los primeros filtros será el de eliminar los 
+\textit{pixels} que sean poco probables de pertenecer al letrero, para lo cual
+se hará uso de un filtro que deje pasar aquellos \textit{pixels} cuyos valores
+de color estén ubicados dentro de un intérvalo pre-establecido. El resultado del
+primer filtro será sometido a otros dos filtros con la finalidad de eliminar
+regiones de la imagen que no aporten información al proceso de segmentación de
+texto.
+
+Luego, se formarán componentes conexas sobre la nueva imagen; para que, 
+mediante el KM se formen 3 \textit{clusters}, dicho de otra forma, se genere 
+una imagen con solo 3 colores (colorA, colorB y colorC).
+
+Como el texto ubicado en los letreros originalmente presenta una distribución 
+de color constante, podemos asumir que, por lo menos uno de los tres colores
+formará parte del texto, es decir, se genera una imagen considerándo únicamente
+un subconjunto de los 3 \textit{clusters} formados.
+
+Finalmente, se trabaja con algunas heurísticas sobre las dos imágenes 
+eliminando regiones que no sean candidatas a ser texto.
