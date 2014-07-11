@@ -1,0 +1,73 @@
+\chapter*{CONCLUSIONES}
+\label{cap:conclusiones}
+\addcontentsline{toc}{chapter}{\numberline{}CONCLUSIONES}
+\begin{enumerate}
+	\item Se propuso un nuevo enfoque para la segmentación de texto en fotografías
+	que contengan letreros informativos - direccionales de las calles de la ciudad
+de Cusco mediante variaciones del algoritmo \textit{K-means clustering} y la
+estructura de datos \textit{Disjoint-sets}, lográndose optimizar los resultados.
+	\item Se recolectó un conjunto de 120 fotografías\footnote{Todas las 
+	fotografías se encuentran en el disco adjunto al ejemplar de tesis.}
+conteniendo letreros informativos - direccionales de la ciudad de Cusco, de las
+cuales se armó un \textit{data set} de 92 fotografías con el objetivo de abordar
+aspectos que influyan en los resultados como el estado del letrero, inclinación,
+tamaño, calidad de la fotografía, niveles de luz y oscuridad (sombras).
+	\item Todos los algoritmos presentados fueron implementados haciendo uso de 
+	diferentes lenguajes de programación. Sin embargo, se utilizó C++ como
+lenguaje principal sobre el cual, fueron implementados únicamente los algoritmos
+usados en el enfoque propuesto optimizándolos con la finalidad de dismiuir su
+complejidad. \footnote{Para consultar detalládamente las implementaciones, hacer
+referencia del código fuente adjunto en el disco o el repositorio
+\url{https://github.com/berthinsandino/Tesis-pre-grado/tree/master}.}
+		\begin{itemize}
+			\item Estructuras de datos:
+			\begin{itemize}
+				\item \textit{Hash table}. Se implementó un \textit{hash table} de 
+				tamaño $2^b$ para elementos con $b$ \textit{bits} de longitud, de tal
+				forma que, para un valor $k$, el $hash_m(k)$ está definido como:
+				\begin{equation}
+					hash_m(k) = k \text{ xor } 2^b - 1
+				\end{equation}
+				\item \textit{Disjoint sets}. Estructura que hace uso del algoritmo 
+				\textit{Union-Find} con las optimizaciones de los enfoques
+				\textit{weighted quick union} y \textit{path compression}.
+			\end{itemize}
+			\item Algoritmos:
+			\begin{itemize}
+			\item Filtro \textit{ad-hoc}. Hace uso de un enfoque de conversión a 
+			enteros para hallar el valor \textit{Hue} evitándose el uso de operaciones
+			punto flotante.
+			\item \textit{Median filter}. Emplea un método óptimo de búsqueda de la 
+			mediana para un kernel con $S=3$. Lleva a cabo 19 operaciones de
+			intercambio y cada intercambio hace uso de tres operaciones \textbf{xor},
+			de esta forma se logra evitar el uso de memoria adicional.
+			\item \textit{Niblack's thresholding}. Para el cálculo de los estadísticos
+			$\mu$ y $\sigma^2$. \footnote{Para determinar el valor de
+			$\sigma$(desviación estándar), primero se debe determinar el valor de
+			$\sigma^2$(varianza).} Se utilizaron dos tablas aditivas, por lo que en
+			$O(1)$ se puede llegar a determinar dichos valores para un kernel de
+			tamaño $K$ cualquiera.
+			\item \textit{K-means clustering}. Se presentó una solución polinomial a 
+			un problema no polinomial.
+			\item \textit{Refinement step} (regla 3). Mediante el uso de el enfoque de
+			compresión de coordenadas y tablas aditivas se determinó en $O(2\lg(c))$
+			el número de componentes dentro de una componente, siendo $c$ el número
+			total de componentes.
+			\end{itemize}
+		\end{itemize}
+	\item El enfoque propuesto hace uso de los algoritmos \textit{Union - Find}
+	(UF) y \textit{K-means clustering}(KM). El UF reduce los parámetros de entrada
+	para el KM. Mientras que, el KM, es usado para resolver el problema de
+	clusterización mediante una solución polinomial (P) limitando el número de
+	iteraciones.\footnote{Al proponerse la solución P, las soluciones brindadas
+	por el algoritmo pueden o no llegar al \textit{global optimum}.}
+	\item El enfoque propuesto, hace uso de un método no supervisado de 
+	aprendizaje para segmentar imágenes con una característica peculiar, el color.
+	También, se presenta una forma de combinar métodos locales y globales para el
+	procesamiento de imágenes. Locales cuando se usó la información local
+	(\textit{neighbors}) para crear componentes basándose en principios de
+	proximidad del color, y globales durante la fase de \textit{clustering}. El
+	enfoque es capaz de operar bajo limitaciones de memoria en comparación con el
+	enfoque SWT, y aunque SWT es más rápido en tiempo de ejecución, se obtuvieron
+	mejores resultados.	  
+\end{enumerate}
