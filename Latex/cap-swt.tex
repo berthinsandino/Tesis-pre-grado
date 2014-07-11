@@ -1,0 +1,67 @@
+\chapter{STROKE WIDTH TRANSFORM}
+\label{cap-swt}
+El 2010, Esphtein \textit{et al.} \cite{Epshtein:SWT:2010}, investigadores de 
+\textit{Microsoft}, presentaron un novedoso \textit{image operator} durante la
+\textit{23rd IEEE Conference on Computer Vision and Pattern Recognition} en San
+Francisco\footnote{\url{http://videolectures.net/cvpr2010_epshtein_dtns/}} con
+el objetivo de buscar el valor del \textit{stroke width} para cada
+\textit{pixel} de una imagen. Para fines demostrativos, su operador fue usado
+para la detección de texto en imágenes con un \textit{background} complejo. 
+
+El algoritmo propuesto fue sometido a los \textit{data sets} de las 
+competencias de localización de texto ICDAR 2003 y ICDAR 2005\cite{ICDAR:web}
+debido a que los resultados obtenidos durante las competencias demostraron que
+aún hay falencias que deben de ser estudiadas. Como resultado de los
+experimentos, su propuesta presentó un mejor rendimiento que otros algoritmos 
+y en un menor tiempo de ejecución.
+
+Dentro del proceso de localización, también se lleva a cabo la tarea de 
+segmentación de texto, y esta es la razón principal por la cual se tomará este
+enfoque para comparar los resultados con los obtenidos por el enfoque propuesto.
+
+El Algoritmo~\ref{alg:swt} describe el esquema usado por el SWT para la 
+segmentación de texto.
+\lstinputlisting[caption=SWT, style=customc, label=alg:swt]{pseudocodigo/codigo4.cod}
+
+\clearpage
+\begin{figure}
+	\setlength{\fboxsep}{0pt}
+	\subfloat[]{\includegraphics[width=8cm]{Cap:SWT/001}\label{Fig:cap-swt:paso01.a}}{ }	
+  \subfloat[]{\fbox{\includegraphics[width=8cm]{Cap:SWT/canny001}\label{Fig:cap-swt:paso01.b}}} \\
+  \subfloat[]{\includegraphics[width=8cm]{Cap:SWT/001_gray}\label{Fig:cap-swt:paso01.c}} { }
+	\subfloat[]{\includegraphics[width=8cm]{Cap:SWT/001_smooth}\label{Fig:cap-swt:paso01.d}}
+	\caption[SWT - I]{SWT - I. (a)Imagen original. (b)\textit{Canny Edge 
+	Detector}. (c)\textit{Grayscale}. (d)\textit{Smooth gaussian filter}.}
+	\label{Fig:cap-swt:paso01}
+\end{figure}
+
+\begin{figure}
+	\subfloat[]{\includegraphics[width=9cm]{Cap:SWT/Jx}\label{Fig:cap-swt:paso02.a}} 
+  \subfloat[]{\includegraphics[width=9cm]{Cap:SWT/Jy}\label{Fig:cap-swt:paso02.b}} 
+  \caption[SWT - II]{Gradientes $X$ y $Y$ obtenidos mediante el filtro 
+  \textit{Sobel Edge Detector}. (a)\textit{Gradiend X}. (b)\textit{Gradiend Y}}
+  \label{Fig:cap-swt:paso02}
+\end{figure}
+
+\begin{figure}
+	\subfloat[]{\includegraphics[width=15cm]{Cap:SWT/swt}\label{Fig:cap-swt:paso03.a}}\\
+  \subfloat[]{\includegraphics[width=15cm]{Cap:SWT/swtx2}\label{Fig:cap-swt:paso03.b}}
+  \caption[SWT - III]{Vector gradiente para cada \textit{pixel}. 
+  (a)\textit{Gradient vectors}. (b)\textit{Gradient vectors (zoom)}}
+  \label{Fig:cap-swt:paso03}
+\end{figure}
+
+\begin{figure}
+	\setlength{\fboxsep}{0pt}
+	\subfloat[]{\fbox{\includegraphics[width=15cm]{Cap:SWT/SWT001}\label{Fig:cap-swt:paso04.a}}}\\
+  \subfloat[]{\fbox{\includegraphics[width=15cm]{Cap:SWT/components001}\label{Fig:cap-swt:paso04.b}}}
+  \caption[SWT - IV]{SWT - IV. (a)SWT. (b)\textit{Connected components}.}
+  \label{Fig:cap-swt:paso04}  
+\end{figure}
+
+\begin{figure}[h!]
+	\setlength{\fboxsep}{0pt}
+	\fbox{\includegraphics[width=15cm]{Cap:SWT/output_001}}
+  \caption[SWT - V]{Resultado: \textit{Valid chains}.}
+  \label{Fig:cap-swt:paso05}	
+\end{figure}
