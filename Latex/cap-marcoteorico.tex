@@ -1,0 +1,1148 @@
+\chapter{TEORÍA DE PROBABILIDADES Y PROCESAMIENTO DE IMÁGENES}
+\label{cap:marcoteorico}
+\setcounter{secnumdepth}{0}
+%\section{Introducción}
+  En este capítulo se describirán algunos temas considerados como material de 
+  importancia brindando conceptos claves para el desarrollo del trabajo de 
+  tesis, como teoría acerca de Procesamiento Digital de Imágenes, algoritmos 
+  heurísticos, \textit{Machine Learning}, y los algoritmos \textit{K-means} 
+  y \textit{Unionf find}.
+
+\setcounter{secnumdepth}{3}  
+%%
+%%Teoria de Probabilidades
+%%
+\section{Teoría de Probabilidades}
+  \begin{defn}[Espacio Muestral] Sea $\Omega$ el conjunto de todos los 
+  posibles eventos. Asumamos $S$ como un subconjunto de eventos a los cuales 
+  se asignan probabilidades. Formalmente, cada evento $\alpha \in S$ es un 
+  subconjunto de $\Omega$
+  \end{defn}
+ En teoría de probabilidades, se requiere que, dado un espacio, los eventos 
+ cumplan con tres características:
+  \begin{itemize}
+    \item Se tiene el evento vacío $\emptyset$ y el evento trivial $\Omega$.
+    \item Se cumple la cerradura con respecto a la unión, es decir, si 
+    $\alpha, \beta \in S$, entonces $\alpha \bigcup \beta \in S$.
+    \item Se cumple la cerradura con respecto al complemento, es decir, si 
+    $\alpha \in S$, entonces $\Omega - \alpha \in S$
+  \end{itemize}
+  \begin{defn}[Variable Aleatoria] Una variable aleatoria $X$ es aquella 
+  función que hace corresponder a cada valor del espacio muestral $\Omega$ un 
+  número real, es decir: 
+  $$X = \lbrace (w, x) / X(x) = x, ~x \in \mathrm{R}, ~w \in \Omega \rbrace$$
+	\end{defn}
+  \begin{thm}[Teorema de Bayes] Si los eventos $B_1, B_2, \dots, B_k$ 
+  constituyen una partición del espacio muestral $\Omega$ de modo que 
+  $P(B_i) \neq 0$ para $i = 1,2,\dots,k$, entonces para un evento $A$ 
+  cualquiera contenido en $\Omega$ de modo que $P(A) \neq 0$, entonces: 
+  $$P(B_r / A) = \dfrac{P(B_r) \cdot P(A / B_r)}{\displaystyle\sum_{i=1}^{k}{P(B_i) \cdot P(A / B_i)}}, ~~ \forall 1\leq r \leq k$$
+  \label{thm:cap-marcoteorico:teorema-bayes}
+	\end{thm}
+  \begin{defn}[Distribución de Probabilidad] Una distribución de probabilidad 
+  $P$ en el par $(\Omega,~ S)$, es una función $P : S \rightarrow \mathrm{R}$
+  que satisface las siguientes condiciones:
+	  \begin{itemize}
+	    \item $P(\alpha) \geq 0 ~~ \forall \alpha \in S$.
+	    \item $P(\Omega) = 1$.
+	    \item Si $\alpha, \beta \in S \text{ y } \alpha \bigcap \beta = \emptyset \text{, entonces } P(\alpha \bigcup \beta) = P(\alpha) + P(\beta)$.
+	  \end{itemize}
+  \end{defn}
+	\begin{defn}[Estimación estadística]
+  La estimación estadística en forma de punto, llamada también estimación 
+  puntual, es la estimación de un solo valor del parámetro de interés 
+  ($\mu = media,~ \sigma^2 = varianza,~ p=\text{\textit{proporción}})$.
+    
+  De una población se puede obtener un sin número de muestras y de cada una 
+  de ellas un valor próximo al parámetro de la población, si utilizamos un 
+  solo valor del conjunto de todos los valores posibles de la muestra, este 
+  procedimiento recibe el nombre de estimación puntual.
+  \end{defn}
+
+%%
+%%Procesamiento de Imagenes
+%%
+\section{Procesamiento de Imágenes}
+%Dr. Brian Mac Namee-http://www.comp.dit.ie/bmacnamee/gaip.htm
+Según el Dr. Brian Mac Namee, el procesamiento de imágenes viene a ser un 
+conjunto de técnicas que son usadas para mejorar la información pictográfica 
+de una imagen para su posterior interpretación, como también viene a ser el 
+proceso de almacenamiento, transmisión y representación de imágenes para ser 
+analizados por máquinas autónomas.
+
+A continuación, se mostrará un ejemplo de algunas transformaciones sobre la 
+imagen de la Figura~\ref{Fig:Cap-marcoteorico:7VentanasTransformaciones.a}, 
+con el objetivo de lograr mejores resultados en la fase de reconocimiento de 
+caracteres. Llevando a cabo una serie de transformaciones sobre la 
+Figura~\ref{Fig:Cap-marcoteorico:7VentanasTransformaciones.a} para obtener 
+la Figura~\ref{Fig:Cap-marcoteorico:7VentanasTransformaciones.i}, se obtuvo 
+\texttt{Sigiflmhnn} como respuesta de someter la imagen final al motor 
+\textbf{New - OCR}, mientras que, con la imagen original fue \texttt{ln}. 
+Aunque no se llega a detectar el texto como se desearía, se observa que al 
+menos hay una mejora con respecto a los de caracteres identificados.
+
+En las próximas secciones se presentarán una serie de ideas y fundamentos 
+relacionados a las transformaciones sobre imágenes.
+
+\begin{figure}[h!]
+\begin{minipage}{\textwidth}
+  \centering
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.a}\includegraphics[height=35mm]{/Cap:MarcoTeorico/FotosCalles_30.jpg}}{ }
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.b}\includegraphics[height=35mm]{/Cap:MarcoTeorico/GrayScale_FotosCalles_30.jpg}}{ }
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.c}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Invert_FotosCalles_30.jpg}}
+  \\
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.d}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Levels_FotosCalles_30.jpg}}{ } 
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.e}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Levels-Histograma_FotosCalles_30.jpg}}
+  \\
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.f}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Threshold_FotosCalles_30.jpg}}{ }
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.g}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Threshold-Histograma_FotosCalles_30.jpg}}
+  \\
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.h}\includegraphics[height=35mm]{/Cap:MarcoTeorico/AfterProc_FotosCalles_30.jpg}}{ }
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.i}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Segmentado_FotosCalles_30.jpg}}
+  
+  \caption[Transformaciones sobre letrero   Siete Ventanas]{Transformaciones 
+  sobre letrero Siete Ventanas. (a) Imagen original. (b) Imagen en escala de 
+  grises. (c) Imagen con colores invertidos. (d) Imagen transformada usando 
+  Levels. (e) Modificación de valores de los \textit{levels}.
+  \footnote{\url{http://docs.gimp.org/en/gimp-tool-levels.html}} (f) 
+  \textit{Thresholding}.\footnote{\url{http://docs.gimp.org/en/gimp-tool-threshold.html}} 
+  (g) Histograma de la imágen en escala de grises. (h) Región de texto 
+  contenida en la imagen. (i) Texto segmentado.}
+  \label{Fig:Cap-marcoteorico:7VentanasTransformaciones}
+\end{minipage}
+\end{figure}
+   
+  \subsection{Colores}
+  \label{cap-marcoteorico:modelo-color}
+    A lo largo de la historia, diferentes personajes propusieron modelos de 
+    representación de los colores. Como es de imaginarse, los modelos fueron 
+    cambiando y adaptándose conforme el avance de la ciencia y tecnología. 
+    Entre los modelos más resaltantes tenemos los siguientes:
+      \begin{itemize}
+        \item \textbf{RBG} (\textit{modelo aditivo}\footnote{Debido a que el 
+        color resultante es obtenido como la suma de los 3 colores básicos.}).
+        Estandarizado en 1931 por el \textit{International Comity for Light 
+        CIE (Commission Internationale de I'Eclairage)}. El modelo describe 
+        3 colores, Rojo, Verde y Azul (RGB por sus nombres en inglés, Red, 
+        Green y Blue), los cuales son permisibles por el ojo humando. 
+        \footnote{Un método usado para representar el modelo RGB es mediante 
+        el Cubo RGB (Figura~\ref{Fig:Cap-marcoteorico:CuboRGB}).} Además, 
+        Young (1802) encontró que la combinación de 3 colores independientes 
+        puede producir todos los colores visibles.
+        %&\item \textbf{HSV}
+        \item \textbf{CMYK} (\textit{modelo de 4 canales}). Usado por la 
+        máquinas de impresión. (\textit{Cian, Magenta, Yellow, Black}(K)).
+        \item \textbf{HSV} (\textit{modelo de 3 canales}). Presenta tres 
+        componentes: \textit{Hue}(H), que varía de 0 a 360 y permite manejar 
+        los colores en un rango de secciones circulares. \textit{Saturation}
+        (S), que varía de 0 a 100 y maneja la cantidad de color. 
+        \textit{Value}(V) que varía de 0 a 100 y maneja la intensidad de luz.
+        \item \textbf{Escala de Grises} (\textit{gray-scale} o 
+        \textit{grey-scale}). Modelo donde cada \textit{pixel} solo almacena 
+        información de la intensidad (valores que van de 0 a 255).
+        \item \textbf{Blanco y Negro} (modelo binario). Modelo donde los 
+        \textit{pixel} es almacenan información para determinar si debe de ser
+        pintado como blanco o negro.
+      \end{itemize}
+      \begin{figure}[h!]
+		    \centering
+		    \includegraphics[scale=0.7]{/Cap:MarcoTeorico/rgbcube.png}
+		    \caption[Espacio de color RGB]{Espacio de color RGB, con los colores 
+		    primarios rojo, verde y azul, colores secundarios amarillo, cian, 
+		    magenta. Las imágenes en la escala de grises en cualquier intensidad 
+		    están a lo largo de la diagonal que conecta los colores blanco y negro 
+		    del espacio.}
+		    \tiny{Fuente: \url{http://tudosobreacor.blogspot.com/2011/02/representacao-de-um-cubo-com-as-cores.html}}
+		    \label{Fig:Cap-marcoteorico:CuboRGB}
+	    \end{figure}
+  \subsection{Transformadas}
+  	\subsubsection{RGB a HSV}
+  		No existe una transformación lineal para transformar del modelo de color
+  		RGB al HSV. Sin embargo, la idea principal del algoritmo de conversión 
+  		es presentada en \cite{Eugene:Color}.
+    \subsubsection{RGB a \textit{GRAY}}
+      Muchas veces se requiere transformar una imagen de color RGB a escala 
+      de grises (\textit{gray-scale}). Sabiendo que la escala de grises está 
+      sobre la diagonal principal del cubo de color, nosotros podemos realizar 
+      una proyección sobre esta diagonal considerando como la escala de grises
+      una variante del color usado.
+  		Una de las dos formas más comunes de conversión son \cite{GRAY7:web}:
+      \begin{eqnarray}
+	      GRAY = \sqrt{RED^2 + GREEN^2 + BLUE^2}\\
+	      GRAY = \dfrac{RED + GREEN + BLUE}{3}\\
+      \end{eqnarray}
+      Sin embargo, para el desarrollo del presente trabajo, se adoptará la 
+      ecuación~\ref{eqn:gray} por tratarse de una variante para números 
+      enteros\cite{GRAYused:web} de los métodos de conversión usados por 
+      \textit{Adobe Photoshop} y \textit{Gimp}
+      \footnote{\url{http://gimp-savvy.com/BOOK/index.html?node54.html}}.
+      \begin{equation}
+      GRAY = (RED \times 77 + GREEN \times 151 + BLUE \times 28 ) >> 8
+      \label{eqn:gray}
+      \end{equation}
+      
+    \subsubsection{Imagen Binaria}
+      Una imagen binaria consta de solo 2 colores, usualmente blanco y negro, 
+      valores que pueden ser representados como 0 y 1. Usualmente esta imagen 
+      se obtiene a partir de una que se encuentre en la escala de grises 
+      usando un umbral, dicho de otra forma, dado un \textit{pixel} en la 
+      posición $(x,y)$, se define lo siguiente:
+      \[
+        b(x,y) =
+        \begin{cases}
+          1 & g(x,y) \leq T \\
+          0 & g(x,y) > T
+        \end{cases}
+      \]
+      donde $b(x,y)$ es el \textit{pixel} binario, $g(x,y)$ el \textit{pixel} 
+      en escala de grises, y $T$ es el umbral (\textit{threshold}).
+      Las imágenes binarias son usadas para el proceso de \textit{detección de
+      lados}.
+  \subsection{Histograma}
+    Herramienta que provee un puente natural entre imágenes y una descripción 
+    probabilística, viene a ser definido como:
+		$$
+		h_f(z)= \# \text{ \textit{pixels} con luminancia } z.
+		$$
+    El histograma es usado para tener una representación global de la imagen, 
+    de la cual se obtiene información cuando se buscan condiciones de 
+    iluminación óptima en la captura de imágenes, transformaciones a escala de
+    grises, y segmentación de imágenes (los objetos del fondo).
+
+  \subsection{Negativos}
+    Una de las aplicaciones a la luminancia de una imagen tiene que ver con 
+    la aplicación independiente a cada \textit{pixel}, llamada operaciones 
+    punto. Por ejemplo, el proceso de transformar una imagen a su negativo 
+    (o viceversa) puede ser desarrollada de diferentes formas como:
+      \begin{itemize}
+        \item \textbf{Imagen Binaria} $Negativo(x,y) = \sim Original(x,y)$ 
+        \footnote{$\sim$ \text{representa la operación lógica 
+        \textit{negación}}.}
+        \item \textbf{Escala de grises} $Negativo(x,y) = 2^k-1-Original(x,y)$
+        \footnote{$k$ es el número de bits usados de memoria para la 
+        representación de un \textit{pixel}.}
+        \item \textbf{RGB} La operación para escala de grises se aplica a cada
+        canal de la imagen.
+      \end{itemize}
+        
+  \subsection{\textit{Image Thresholding}}
+ 	En muchas aplicaciones, los niveles en escala de grises de los 
+ 	\textit{pixels} pertenecientes a objetos son sustancialmente diferentes a 
+ 	los niveles de los \textit{pixels} que forman parte del \textit{background}.
+ 	\textit{Thresholding} representa una forma simple pero efectiva de separar 
+ 	los objetos del \textit{background}.
+ 	
+ 	La salida generada por el proceso involucrado con el \textit{thresholding} 
+ 	es una imagen binaria cuyo primer componente indica el \textit{foreground} 
+ 	mientras que su complemento indica el \textit{background}. Dependiendo de la 
+ 	aplicación, el \textit{foreground} puede ser representado como el valor 0 en 
+ 	escala de grises (color negro) o el valor 255 (color blanco).
+ 	
+ 	Mehmet et al. \cite{Sezgin:2004:Survey} agrupa los métodos 
+ 	\textit{threshold} en seis categorías, las cuales son:
+ 	\begin{itemize}
+ 		\item \textbf{\textit{Histogram shape-based methods}}, basados en las 
+ 		propiedades que presenta el histograma generado al iterar sobre cada 
+ 		\textit{pixel} de la imágen en escala de grises.
+ 		\item \textbf{\textit{Clustering-based methods}}, donde los 
+ 		\textit{pixels} son agrupados en dos categorías.
+ 		\item \textbf{\textit{Entropy-based methods}}, usan la entropía de las 
+ 		regiones del \textit{foreground} y \textit{background} maximizándola por 
+ 		ser un indicativo de transferencia de información o minimizándola por ser 
+ 		un indicativo de preservación de la información.
+ 		\item \textbf{\textit{Object attribute-based methods}} basados en la 
+ 		búsqueda de una medida de similitud entre la imagen en escala de grises y 
+ 		la imagen binaria.
+ 		\item \textbf{\textit{Spatial methods}} usan distribuciones de 
+ 		probabilidad y/o correlación entre los \textit{pixels} vecinos.
+ 		\item \textbf{\textit{Local methods}} los cuales adaptan el valor del 
+ 		\textit{threshold} para cada \textit{pixel} dependiendo de valores 
+ 		estadísticos locales.
+ 	\end{itemize}
+ 	
+  \subsubsection{\textit{Otsu's method}}
+    El problema de \textit{Thresholding} puede ser visto como un problema de 
+    decisión estadística donde el objetivo es minimizar el error promedio 
+    encontrado al asignar los \textit{pixels} a 2 o más grupos (llamados 
+    también clases). Otsu \cite{Otsu:1979:Threshold}, plantea una solución al 
+    problema usando reglas de decisión bayesianas maximizando de la varianza 
+    entre las dos clases.
+
+Sea $\{0, 1, \dots, L-1\}$ los niveles de intesidad de una imagen de tamaño 
+$W\times H$ y $n_i$ denota el número de \textit{pixels} con intensidad i. el 
+número total de \textit{pixels} es: $WH = n_0 + n_1 + \dots + n_{L-1}$. Se 
+determina la probabilidad para un nivel de intesidad $i$ como:
+\begin{equation}
+  p_i = \frac{n_i}{W \times H}
+\end{equation}
+
+Suponiendo que se tome un \textit{threshold} $T(k) = k$ para clasificar los 
+\textit{pixels} en dos clases $C_1$ (\textit{background}) y $C_2$ 
+(\textit{foreground}) de tal forma que los niveles de intensidad entre el 
+rango $[0, ~k]$ formen parte de $C_1$ y los niveles en el rango 
+$[k + 1, ~L - 1]$ formen parte de $C_2$, se define la probabilidad de que un 
+\textit{pixel} este asignado a la clase $C_1$ como:
+\begin{equation}
+  P_1(k) = \sum_{i = 0}^{k}{p_i}
+\end{equation}
+
+La media de los \textit{pixel} asignados a $C_1$ estará dado por:
+\begin{equation}
+  \mu_1(k) = \sum_{i = 0}^{k}{i ~P(i / C_1)}
+\end{equation}
+donde $P(i / C_1)$ es la probabilidad del valor $i$ dado que el i-ésimo nivel 
+de intensidad pertenece forma parte del background. Por el teorema de Bayes 
+(Teorema~\ref{thm:cap-marcoteorico:teorema-bayes}) tenemos:
+\begin{equation}
+  \mu_1(k) = \sum_{i = 0}^{k}{i ~\frac{P(i) ~ P(C_1 / i)}{P(C_1)}}
+\end{equation}
+dado que $i$ varia en el rango $[0, ~k]$ y por la suposición inicial todos los
+valores entre ese rango pertenecen a $C_1$, $P(C_1 / i) = 1$, por lo tanto se
+tendría:
+\begin{equation}
+  \mu_1(k) = \sum_{i = 0}^{k}{i ~\frac{P(i)}{P(C_1)}}
+  \label{Equ:Threshold-Otsu:mu}
+\end{equation}
+como $P(C_1)$ representa la probabilidad de ocurrencia de 
+$C_1$, $P(C_1) = P_1(k)$, y también $P(i) = p_i$ debido a que es la
+probabilidad de la intensidad $i$. Reemplazando 
+en~(\ref{Equ:Threshold-Otsu:mu}) tenemos:
+\begin{equation}
+  \mu_1(k) = \frac{1}{P_1(k)} ~ \sum_{i = 0}^{k}{i \ p_i}
+\end{equation}
+
+Como el objetivo es evaluar la asignación de \textit{pixels} a las clases
+$C_1$ y $C_2$, y por definición la varianza es un estadístico que mide cuan 
+lejos un grupo de elementos se encuentra distribuido, se introduce el 
+estadístico $\sigma_B^2$ cuyo valor representa la varianza entre clases 
+(\textit{between-class variance} indicando que tan cerca se encuentran las dos
+clases. Por definición \cite{Demirkaya:2004:DIBthreshold}, $\sigma_B^2(k)$ se
+expresa de la siguiente forma:
+
+\begin{equation}
+  \sigma_B^2(k) = P_1(k) ~ P_2(k) ( \mu_1(k) - \mu_2(k))^2
+\end{equation}
+
+Finalmente, el problema queda reducido a un problema de maximización, donde el
+$k^*$ óptimo estará determinado por:
+\begin{equation}
+  \sigma_B^2(k^*) = \max_{0 \leq k \leq L - 1} \sigma_B^2 (k)
+\end{equation}
+
+La Figura~\ref{Fig:Cap-marcoteorico:otsu} muestra un ejemplo del método Otsu 
+calculándose el valor $\sigma_B^2(k)$ para
+$k = 0,~ 1,~ 2,~ 3,~ 4~ \text{y}~5$; donde para $k=3$ $\sigma_B^2$ es máximo.
+
+\begin{figure}[h!]
+	\centering
+  \subfloat[]{\includegraphics[width=3cm]{/Cap:MarcoTeorico/Otsu01}\label{Fig:Cap-marcoteorico:otsu.a}} { }
+  \subfloat[]{\includegraphics[width=3cm]{/Cap:MarcoTeorico/Otsu02}\label{Fig:Cap-marcoteorico:otsu.b}} \\
+  \subfloat[]{\includegraphics[width=14cm]{/Cap:MarcoTeorico/Otsu03}\label{Fig:Cap-marcoteorico:otsu.c}} \\
+	\caption[\textit{Otsu's method}]{\textit{Otsu's method}(a) Imagen en escala 
+	de grises. (b) Histograma. (c) Búsqueda del $k^*$ óptimo.} \tiny{Fuente:
+	\url{http://www.labbookpages.co.uk/software/imgProc/otsuThreshold.html}}
+	\label{Fig:Cap-marcoteorico:otsu}
+\end{figure}
+
+\subsubsection{\textit{Niblack's method}}
+	\textit{Niblack's method}\cite{Niblack:1985:IDI} es un \textit{local 
+	thresholding algorithm} que adapta el \textit{threshold} para cada
+	\textit{pixel} de acuerdo a la media y la desviación estándar sobre una 
+	ventana de tamaño específico. 
+	El \textit{threshold} para un \textit{pixel} $P$ en la posición $(x, ~y)$ 
+	está dado por:
+	\begin{equation}
+		T(P) = \mu_{(x,~y)} + k \sigma_{(x, ~y)} - c
+	\end{equation}
+	donde $\mu$ y $\sigma$ son los valores de la media y desviación estándar 
+	local (todos los \textit{pixels} ubicados dentro de una ventana). El valor 
+	$k$ es un parámetro usado para controlar y ajustar el efecto de la 
+	desviación estándar sobre las características de los objetos, en el 
+	algoritmo propuesto por Niblack se sugiere que $k$ sea igual a $0.2$ para
+	objetos luminosos y $-0.2$ para objetos oscuros. $c$ es un parámetro de 
+	compensación (conocido como \textit{offset value}), en la implementación 
+	original del algoritmo $c$ es igual a $0$. 
+	
+	La Figura~\ref{Fig:Cap-marcoteorico:niblack} muestra un ejemplo de los 
+	resultados obtenidos mediante el \textit{Niblack's method} haciendo variar 
+	el tamaño de las ventanas para los cálculos de los estadísticos usados en el
+	enfoque. 
+		
+	\begin{figure}[h!]
+	\centering
+	\setlength{\fboxsep}{0pt}
+  \subfloat[]{\fbox{\includegraphics[width=3cm]{/Cap:MarcoTeorico/niblack_3x3}\label{Fig:Cap-marcoteorico:niblack.a}}} { }
+  \subfloat[]{\fbox{\includegraphics[width=3cm]{/Cap:MarcoTeorico/niblack_5x5}\label{Fig:Cap-marcoteorico:niblack.b}}} \\
+	\caption[\textit{Niblack's method}]{\textit{Niblack's method} sobre la
+	Figura~\ref{Fig:Cap-marcoteorico:otsu.a}, $k=-0.2$ y $c=0$. (a) Resultado
+	usando una ventana de tamaño $3\times 3$. (b) Resultado usando una ventana 
+	de tamaño $5\times 5$.}
+	\label{Fig:Cap-marcoteorico:niblack}
+	\end{figure}
+	
+	La forma de determinar la clase a la cual pertenecerá un determinado
+	\textit{pixel} $P$ se muestra en \ref{Equ:niblack}.
+	\begin{equation}
+		P = P > T(P) ~?~ \textit{foreground} : \textit{background}
+		\label{Equ:niblack}
+	\end{equation}	
+	
+\subsection{\textit{Image Sharpening}}
+	Técnica para detectar lados y resaltar detalles (Fig.~\ref{Fig:Sharpening}).
+Dentro de los cuales podemos encontrar los siguiente métodos:
+	\begin{itemize}
+		\item Sobel
+    \item LoG
+    \item Thresholded LoG
+    \item Zero Cross
+  \end{itemize}
+
+  \begin{figure}[h!]
+		\centering
+		\subfloat[]{\label{Fig4a}\includegraphics[width=39.7mm]{/img/sharpening01.png}}{ }
+    \subfloat[]{\label{Fig4b}\includegraphics[width=40.5mm]{/img/sharpening02.png}} { }
+    \subfloat[]{\label{Fig4c}\includegraphics[width=40mm]{/img/sharpening03.png}}
+    \\
+    \subfloat[]{\label{Fig4d}\includegraphics[width=40mm]{/img/sharpening04.png}} { }
+    \subfloat[]{\label{Fig4e}\includegraphics[width=40mm]{/img/sharpening05.png}}
+    \caption[\textit{Image Sharpening}]{\textit{Image Sharpening}. (a) Imagen 
+    original. (b) Sobel. (c) LoG. (d) Thresholded LoG. (e) Zero Cross.} 
+    \tiny{Fuente: Digital Image Processing, Dr.Rong Zhang}
+    \label{Fig:Sharpening}
+	\end{figure}    
+
+\subsection{\textit{Edge detection}}
+  La detección de lados es uno de los métodos de pre-procesamientos en
+  imágenes más importantes, usado para localizar los cambios en la función de 
+  intensidad, los lados son \textit{pixels} donde la función en mención
+  (brillo) cambia abrúptamente.
+  Estudios en neurología y psico-física sugieren que en una imagen donde los
+  cambios de la función de intensidad tienen cambios radicales son 
+  importantes para la percepción de la imagen. Si únicamente los lados de 
+  mayor magnitud son considerados, dicha información es suficiente para tener 
+  un entendimiento de la imagen. Gracias a ello, podemos reducir 
+  significativamente la información de la imagen, como se observa en la 
+  figura~\ref{Fig:Cap-marcoteorico:LaSiesta}.
+  \begin{figure}[h!]
+    \centering
+    \subfloat[]{\label{Fig:Cap-marcoteorico:LaSiesta.a}\includegraphics[width=60mm]{/Cap:MarcoTeorico/LaSiesta}} { }
+		\subfloat[]{\label{Fig:Cap-marcoteorico:LaSiesta.b}\includegraphics[width=60mm]{/Cap:MarcoTeorico/Edge_LaSiesta.png}}
+    \caption[\textit{Edge detection}]{Detección de lados(b) sobre la imagen
+    de \textbf{La Siesta}.}\tiny{Fuente: Picasso, 1919.}
+    \label{Fig:Cap-marcoteorico:LaSiesta}
+  \end{figure}
+
+\section{\textit{Basis of SWT approach}}
+
+\subsection{\textit{Stroke}}
+Un \textit{stroke} es una parte continua dentro de la imagen que forma una
+banda cuyo ancho se mantiene aproximadamente constante (ver 
+Figura~\ref{Fig:cap-marcoteorico:Stroke});
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=7cm]{/Cap:MarcoTeorico/stroke}
+  \caption{Ejemplo de un \textit{stroke}.}
+  \label{Fig:cap-marcoteorico:Stroke}\tiny{Fuente: \textit{Detecting text in 
+  natural scenes with stroke width transform} \cite{Epshtein:SWT:2010}.}
+\end{figure}
+
+\subsection{\textit{Convolution operator} ($\otimes$)}
+Es una forma de multiplicar dos arreglos de números, generalmente de 
+diferentes tamaños pero definidos en el mismo dominio $D$ para producir un 
+tercer arreglo de números definido en $D$.
+En el procesamiento de imágenes, el primer arreglo generalmente es una imagen
+$I$ en escala de grises, mientras que el segundo es un arreglo mucho más
+pequeño llamado \textit{kernel} $K$ de orden $(m \times n)$. La operación que 
+se lleva a cabo mediante el operador $\otimes$ se desarrolla desplazando el 
+\textit{kernel} en $I$, empezando del \textit{pixel} superior-izquierdo a 
+traves de todas las posiciones mientras el \textit{kernel} encaje dentro de 
+los rangos de $I$. Matemáticamente, la operación se define como:
+\begin{equation}
+  I(i, j) \otimes K = \sum_{k=1}^m \sum_{l=1}^n {I(i + k - 1, j + l - 1) \cdot K(k, l)}
+\end{equation}
+
+\begin{figure}[h!]
+  \centering
+  \subfloat[]{\includegraphics[width=4.0cm]{/Cap:MarcoTeorico/paris_ori}} { }
+  \subfloat[]{\includegraphics[width=4.0cm]{/Cap:MarcoTeorico/paris_gray}} { }
+  \subfloat[]{\includegraphics[width=4.0cm]{/Cap:MarcoTeorico/paris_smoothed}} \\
+  \subfloat[]{\includegraphics[width=4.0cm]{/Cap:MarcoTeorico/paris_grad}} { }
+  \subfloat[]{\includegraphics[width=4.0cm]{/Cap:MarcoTeorico/paris_grad_zoom01}} { }
+  \subfloat[]{\includegraphics[width=4.0cm]{/Cap:MarcoTeorico/paris_grad_zoom02}} \\  
+  \caption[Gradiente de una imagen]{Gradiente de una imagen. 
+  (a)Imagen original*. (b)Imagen en escala de grises. (c)\textit{Smoothed
+  Image}, con kernel igual a $[0.25,~ 0.5,~ 0.25]$. (d) Mapa de gradientes 
+  para cada \textit{pixel}. (e) Zoom (12x). (f) Zoom (27x) donde se observa
+  la gradiente (vector de color azul) para cada \textit{pixel}.}
+  \tiny{*Fuente: \url{http://www.frenchpropertylinks.com/iledefrance/paris/}}
+  \label{Fig:cap-marcoteorico:Paris-grad}
+\end{figure}
+
+\subsection{\textit{Image gradient}}
+Es la primera derivada de la Imagen $I$ con respecto a $x$ e $y$, dicho de 
+otra forma:
+\begin{equation}
+  \nabla J = (J_x, J_y) = \left( \frac{\partial I}{\partial x}, \frac{\partial I}{\partial y} \right)
+\end{equation}
+donde:
+\begin{eqnarray}
+  J_x = \left( I \otimes \frac{\delta}{\delta x} \right) \otimes S \\
+  J_y = \left( I \otimes \frac{\delta}{\delta y} \right) \otimes S'
+\end{eqnarray}
+%\end{defn}
+\noindent siendo $\frac{\delta}{\delta x} = [1, -1]$, $\frac{\delta}{\delta y} = [1, -1]'$, y $S = [1, 1]'$ (Figura~\ref{Fig:cap-marcoteorico:Paris-grad}).
+
+\section{Conectividad}
+\subsection{\textit{Digital Plane}}
+Un plano digital\cite{Biswas:2010:IsoCovers}, $\mathrm{Z}^2$, es un conjunto 
+de puntos que tienen coordenadas enteras definidas en el plano $\mathrm{R}^2$.
+Un punto en el plano digital es conocido como \textit{digital point} o tambien
+\textit{pixel}.
+
+\subsection{\textit{k-connectedness}}
+El conjunto de puntos vecinos (Figura~\ref{Fig:cap-marcoteorico:N-connected}) 
+adyacentes a un punto $p(x,y) \in \mathrm{Z}^2$ se denomina 
+\textit{4-connectedneighborhood} de p, denotado por: 
+$N_4(p) = \lbrace (x', y') ~/~ (x', y') \in \mathrm{Z}^2 \wedge |x - x'| + |y - y'| = 1 \rbrace$. %, donde $\delta_H$ representa la \textbf{distancia Hamiltoneana}. 
+
+El conjunto de todos los \textit{8-connected} de $p$ esta dado por:
+$N_8(p) = \lbrace (x', y') ~/~ (x', y') \in \mathrm{Z}^2 \wedge \max ( |x - x'|, |y - y'| ) = 1 \rbrace$.
+
+\begin{figure}[h]
+  \centering
+  \subfloat[]{\includegraphics[scale=0.5]{/Cap:MarcoTeorico/4-connected}} { \, }  
+  \subfloat[]{\includegraphics[scale=0.56]{/Cap:MarcoTeorico/6-connected}} { }
+	\subfloat[]{\includegraphics[scale=0.5]{/Cap:MarcoTeorico/8-connected}}
+  \caption[Conectividad]{Conectividad. (a)\textit{4-connected}.
+  (b)\textit{6-connected}. (c)\textit{8-connected}.}\tiny{Fuente: 
+  \url{http://www.mif.vu.lt/atpazinimas/dip/FIP/fip-Characte.html}}
+  \label{Fig:cap-marcoteorico:N-connected}
+  %fundamentals of image processing
+\end{figure}
+
+\subsection{\textit{Equivalence relation}}
+Dados tres puntos $p,~q$ y $r$ que pertenecen a un plano digital $P$. Si $p$
+está conectado a $q$, se asume que la relación de conexión entre ambos puntos
+es una relación de equivalencia\cite{Biswas:2010:IsoCovers}; es decir, la 
+relación es:
+\begin{itemize}
+  \item \textbf{Reflexiva}, $p$ está conectado a $p$.
+  \item \textbf{Simétrica}, si $p$ está conectado a $q$, entonces $q$ está 
+  conectado a $p$.
+  \item \textbf{Transitiva}, si $p$ está conectado a $q$ y $q$ está conectado 
+  a $r$, entonces $p$ está conectado a $r$.
+\end{itemize}
+
+Mediante una relación de equivalencia, es posible dividir objetos en
+diferentes clases de equivalencia.
+
+\subsection{\textit{Connectivity}}
+Dos puntos $p$ y $q$ están en la misma clase de equivalencia si y solo si
+ambos puntos están conectados mediante una relación de equivalencia.
+
+\subsection{\textit{Connected image region}}
+Una clase de equivalencia con puntos (\textit{pixels}) definidos en un plano
+digital $P$ es llamada una región conexa de $P$ si todos los puntos comparten 
+una propiedad específica, generalmente esta propiedad está relacionada al
+color de los \textit{pixels}. 
+
+\section{\textit{Disjoint-Sets}}
+\textit{Disjoint-Sets} es una estructura de datos para modelar una colección
+conjuntos disjuntos (\textit{disjoint sets}) de un modo eficiente, con
+prácticamente una complejidad $\approx O(1)$ para determinar a qué conjunto 
+pertenece un \textit{item}, o para determinar si dos \textit{items} pertenecen
+al mismo conjunto.
+
+\subsection{Descripción del problema}
+Sea la entrada una secuencia pares de $N$ enteros, donde cada entero 
+representa un objeto de algún tipo, el par ``$p~q$'' es interpretado como 
+``$p$ está conectado a $q$'', donde el término ``conectado'' representa una 
+relación de equivalencia. Para cada par, se debe determinar si ambos enteros
+pertenecen a un mismo subconjunto, en caso de no cumplirse, se tiene que unir 
+los conjuntos a los cuales cada elemento pertenece. Inicialmente, cada 
+elemento forma un conjunto disjunto.
+
+\subsection{\textit{Naïve Approach}}
+Tener un \textit{vector} de \textit{sets} e iterar cada vez que se desee
+buscar a que conjunto pertenece un elemento dado resultaría muy costoso. Aún 
+si se llegase a usar el algoritmo \textit{set\_union} implementado en 
+\textit{C++ STL}, que combina dos \textit{sets} en un tiempo lineal, se tiene 
+el problema de manejar \textit{vectors} de \textit{sets}. Por lo que es 
+necesario el uso de una estructura de datos que soporte dos tipos de 
+operaciones:
+\begin{itemize}
+	\item \textit{Union} para unir dos conjuntos, y
+	\item \textit{Find} que determine el conjunto al cual pertenece un elemento.
+\end{itemize}
+
+\subsection{\textit{Union-Find algorithm}}
+Supóngase que se agregue un \textit{constrain} al problema especificado. Cada
+conjunto debe de tener un elemento representativo. 
+Así, el problema original se reduce a construir un bosque donde cada árbol 
+representará un conjunto y el nodo raíz del árbol será el elemento 
+representativo del conjunto; por consiguiente, la operación \textit{Find} 
+puede ser llevada a cabo mediante una búsqueda \textit{bottom-up} y la 
+operación \textit{Union} (Figura~\ref{fig:cap-segmentacion:UF_tree}) solo 
+necesitaría crear una arista entre los nodos raices de cada árbol que se
+desee unir.\cite{Wayne:2011:Alg}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=8cm]{Cap:Segmentacion/UF_tree.png}
+	\caption{Operación \textit{Union} entre dos conjuntos.}\tiny{Fuente: 
+	\url{http://www.lirmm.fr/~fiorio/research/research/image-analysis/98.html}}
+	\label{fig:cap-segmentacion:UF_tree}
+\end{figure}
+
+Como el problema se redujo a trabajar sobre árboles dirigidos, una 
+representación de la estructura puede ser llevada a cabo mediante un arreglo
+de enteros $parent \in \mathrm{Z}^n$, siendo $n$ el número máximo de elementos
+sobre los que se trabajará, tal que $parent[i]$ indicará el padre del 
+$i$-ésimo elemento y  si $parent[i] = i$, entonces el $i$-ésimo elemento es el
+nodo raiz del árbol. 
+(Figura~\ref{fig:cap-segmentacion:forest_representacion}).
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=7cm]{Cap:Segmentacion/tree_representation_graph}\\
+  \includegraphics[width=7cm]{Cap:Segmentacion/tree_representation_array}
+	\caption{Representación del \textit{forest}.}
+	\label{fig:cap-segmentacion:forest_representacion}
+\end{figure}
+
+\subsubsection{\textit{Weighted quick union}}
+Dados dos árboles $T_1$ y $T_2$ con $n_1$ y $n_2$ elementos respectivamente 
+$(n_1 > n_2)$; y sean los elementos $p \in T_1$ y $q \in T_2$. La operación
+\textit{Union(p,~q)} construirá una arista entre los árboles $T_1$ y $T_2$. 
+
+Como para construir una arista dirigida entre los árboles es necesario conocer
+los elementos representativos de cada árbol y además, saber a que nodo será
+dirigida la arista. Para ello, se analiza los dos posibles casos
+(Figura~\ref{fig:cap-segmentacion:UF_weight}):
+\begin{itemize}
+	\item \textbf{Primer caso}, se crea una arista del árbol $T_1$ a $T_2$.
+	\item \textbf{Segundo caso}, se crea una arista del árbol $T_2$ a $T_1$.
+\end{itemize}
+\begin{figure}[h!]
+  \centering
+	\subfloat[]{\includegraphics[width=5cm]{Cap:Segmentacion/UF_weightA}\label{fig:cap-segmentacion:UF_weight.a}} { \, \, \, \, }
+  \subfloat[]{\includegraphics[width=5cm]{Cap:Segmentacion/UF_weightB}\label{fig:cap-segmentacion:UF_weight.b}} \\ 
+	\caption[\textit{Weighted quick union}]{\textit{Weighted quick union}. 
+	(a) Primer caso. (b) Segundo caso.}
+	\label{fig:cap-segmentacion:UF_weight}
+\end{figure}
+
+Si se llegase a considerar el primer caso, para cada consulta que se realice
+sobre $T_1$, el número de iteraciones llevadas a cabo por la búsqueda
+\textit{bottom-up} para encontrar el nodo raíz se incrementará en una unidad.
+Si se llegase a considerar el segundo caso, el número de iteraciones para los
+elementos de $T_2$ se incrementaría en una unidad. Dicho de otra forma, 
+considerando que $T_1$ y $T_2$ sean árboles de altura igual a uno, si se
+realizan consultas sobre todos los elementos de cada árbol, para el primer
+caso se llevarían a cabo $2 \cdot n_1 + n_2$ mientras que para el segundo
+caso se llevarían a cabo $n_1 + 2 \cdot n_2$. Como $n_1 > n_2$, el número de 
+consultas llevadas a cabo en el primer caso es mayor al número de consultas 
+que se llevarían en el segundo caso. Por lo tanto, en vez de crear la arista
+de manera aleatória, se debe de considerar el número de elementos de cada
+árbol y de acuerdo a ello tomar la mejor decisión.
+
+\subsubsection{\textit{Path compression}}
+Dado que, la operación \textit{Find} tiene como objetivo, para un nodo
+$p \in T$, buscar el elemento $root_T$ que represente la raíz del árbol $T$,
+es decir, se debe encontrar un camino $w$ de tal forma que 
+$w = p\rightarrow q_1 \rightarrow q_2 \dots \rightarrow q_m \rightarrow root_T$. 
+Suponiendo que se lleven a cabo futuras consultas sobre los nodos
+$q_1, q_2, \dots, q_m$, se necesitaría realizar $\frac{m \cdot (m + 1)}{2}$ 
+operaciones, mientra que, si la primera vez que se formó el camino $w$ se 
+actualizan los nodos padre de cada nodo en $w$ al valor $root_T$; para las 
+consultas futuras, solo se necesitaría llevar a cabo $m$ operaciones.
+
+La Figura~\ref{fig:cap-segmentacion:UF_path} ilustra el resultado luego de 
+llevar a cabo la consulta \textit{Find} sobre el nodo 9. Los nodos que forman 
+parte del camino $w$ está marcados de color rojo (\textit{parte (a)}), 
+mientras que la \textit{parte (b)} muestra el árbol después de llevar a cabo 
+el proceso de actualización de padres para cada nodo en $w$.
+
+\begin{figure}[h!]
+  \centering
+	\subfloat[]{\includegraphics[width=5cm]{Cap:Segmentacion/UF_pathA}\label{fig:cap-segmentacion:UF_path.a}} { \, \, \, \, }
+  \subfloat[]{\includegraphics[width=5cm]{Cap:Segmentacion/UF_pathB}\label{fig:cap-segmentacion:UF_path.b}} \\ 
+	\caption[\textit{Path compression}]{\textit{Path compression}. (a) Búsqueda 
+	del camino del nodo $9$ a la raíz. (b) Árbol comprimido.}
+	\label{fig:cap-segmentacion:UF_path}
+\end{figure}
+
+\subsubsection{Complejidad}
+
+Haciendo uso del algoritmo \textit{Union-Find} junto con al enfoque 
+\textit{weighted quick-union} aplicado con \textit{path compression} se puede
+obtener una complejidad $\approx$ $O(m~ \lg^*n)$~\cite{Mirzaian:AofUF:web}, 
+siendo $m$ el número de consultas, $n$ el número de elementos, y $\lg^*n$ es 
+el número de veces necesitados para que la función $lg$ de un número alcance 
+el valor de 1 (Tabla~\ref{Tab:Cap-marcoteorico:lg*n}).
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline 
+    N & $lg^*N$ \\ 
+	  \hline
+		1 & 0 \\	  
+		2 & 1 \\
+		4 & 2 \\		
+		16 & 3 \\		
+		65536 & 4 \\		
+		265536 & 5 \\
+	  \hline
+  \end{tabular}
+  \caption{Función $lg^*N$.}
+  \label{Tab:Cap-marcoteorico:lg*n}
+\end{table}
+
+\nocite{UF:proof2}
+
+\section{\textit{Machine Learning}}
+	El aprendizaje automático (\textit{Machine Learning}) es una rama de la 
+	Inteligencia Artificial cuyo principal objetivo es dar a las computadoras la
+	posibilidad de modificar o adaptar sus acciones para lograr mayor exactitud 
+	y precisión.
+	
+	La clasificación, es uno de los problemas abarcados en esta área de 
+	conocimiento, especialmente por que fueron ámpliamente utilizados en el 
+	reconocimiento de caracteres desde 1990, dando buenos resultados frente a 
+	enfoques tradicionales. Algunos enfoques usados en la resolución de
+	problemas involucran conceptos como: \textit{artifitial neural networks},
+	\textit{support vector machines}, \textit{k-means clustering},
+	\textit{decision trees}, y muchos otros que con el paso del tiempo, fueron
+	mejorándose y adaptando nuevas técnicas debido al crecimiento exponencial 
+	que sufre la información. Aún con las mejoras a las metodologías y técnicas,
+	muchos problemas están lejos de ser resueltos.
+
+\subsection{\textit{Artificial Neural Networks}}
+Numerosos avances en el desarrollo de sistemas inteligentes fueron inspirados 
+en el estudio de las redes neuronales biológicas. Investigadores de muchas 
+disciplinas científicas diseñaron Redes Neuronales Artificiales 
+(\textit{Artificial Neural Networks}, \textit{Neural Networks} - NN por 
+simplicidad) para resolver una variedad de problemas dentro del área de 
+reconocimiento de patrones, predicción, optimización, memoria asociativa, y de
+control.
+
+Para la resolución de estos problemas, se plantearon numerosos enfoques 
+convencionales que presentan un buen rendimiento en entornos bien conocidos, 
+pero ninguno es muy flexible como para desenvolverse bajo circunstancias fuera
+de su dominio.
+
+A pesar de que las computadoras modernas superan a las personas en el dominio
+de cálculos numéricos, estos aún no pueden resolver problemas realmente 
+complejos como el reconocimiento de una persona dentro de un grupo de 
+animales, debido a que la arquitectura del sistema neuronal biológico es muy
+diferente a la arquitectura presentada por Von Neumann lo que afecta las 
+tareas que cada modelo puede llevar a cabo. Por ello, numerosos esfuerzos 
+fueron realizados para desarrollar sistemas inteligentes basados en la 
+arquitectura de Von Neumann, sin embargo no se cuentan con resultados que 
+puedan ser generalizados para cumplir con el propósito de un sistema
+inteligente.
+
+\subsubsection{Modelo computacional de una neurona}
+La Figura~\ref{Fig:cap-marcoteorico:McCulloch-NeuronModel}, muestra el modelo
+computacional para una neurona artificial propuesto por McCulloch y Pitts
+\cite{McCulloch:1943:TBofMB}. Este modelo matemático lleva a cabo la operación 
+suma ponderada (\textit{weighted sum}) para $n$ señales $x_j$ que reciba como 
+entrada $(j = 1, 2, \dots, n)$, generando la salida de $1$ el resultado de la
+operación es superior a un \textit{threshold} $u$, generando una salida de $0$ 
+en el caso opuesto. Matematicamente, se expresa mediante la ecuación 
+\ref{Equ:weightedsum}.
+\begin{equation}
+	y = \theta \left( \sum_{j=1}^{n}{w_j x_j - u} \right)
+	\label{Equ:weightedsum}
+\end{equation}
+siendo $\theta$ una función de activación (\textit{activation function}).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.8]{/Cap:MarcoTeorico/McCulloch_ModelNeuron.eps}
+  \caption{Modelo de la neurona propuesto por McCulloch-Pitts}
+  \tiny{Modificación basada en la fuente: 
+  \url{http://wwwold.ece.utep.edu/research/webfuzzy/docs/kk-thesis/kk-thesis-html/node12.html}}
+  \label{Fig:cap-marcoteorico:McCulloch-NeuronModel}
+  %Artificial Networks - A tutorial
+\end{figure}
+
+A pesar de la simplicidad de este modelo, se genera la siguiente analogía con 
+respecto a una neurona biológica: los enlaces y las interconexiones modelan 
+los \textit{axons} y \textit{dentrites}, los pesos de las conexiones 
+representan las \textit{synapses}, y el \textit{activation function} se 
+aproxima a la actividad realizada en un \textit{soma}. Sin embargo, por el 
+número de suposiciones del modelo, no se refleja el verdadero comportamiento 
+de una neurona biológica.
+
+El modelo de McCulloc-Pitts fue generalizado de diferentes formas, donde uno
+de los cambios más resaltantes es el uso de funciones de activación diferentes
+a la función \textit{threshold} usada originalmente, tal es el caso de 
+\textit{linear active function}, \textit{sigmoid} y \textit{gaussian function}
+. De estas tres funciones, la \textit{sigmoid function} \cite{Han:1995:TIofSF}
+es la más frecuente dentro de las NN debido al crecimiento suave que presenta. 
+
+La ecuación \ref{Equ:logistic}, define la función \textit{sigmoid} estandar
+también conocida como \textit{logistic function} donde el parámetro $\beta$
+representa el valor de la pendiente.
+
+\begin{equation}
+g(x) = \frac{1}{1 + \exp^{-\beta x}}
+\label{Equ:logistic}
+\end{equation}
+
+\subsubsection{Arquitecturas}
+Las NN pueden ser vistos como grafos dirigidos donde las neuronas son los
+nodos y las conexiones las aristas. Basándonos en un modelo que considere las 
+conexiones, podemos formar dos categorias de NN (Figura~
+\ref{Fig:cap-marcoteorico:TaxonomyNN}):
+\begin{itemize}
+  \item \textit{Feed-forward networks}, donde los grafos no poseen ciclos.
+  \item \textit{Recurrent (or feedback) networks}, donde los ciclos ocurren a 
+  causa de las conexiones de retroalimentación.
+\end{itemize}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.35]{/Cap:MarcoTeorico/Taxonomy_NN.eps}
+  \caption[Taxonomía de las arquitecturas \textit{feed-forward} y 
+  \textit{recurrent/feedback}]{Taxonomía de las arquitecturas \textit{feed-
+  forward} y \textit{recurrent/feedback}.\\ \centering\tiny{Fuente: 
+  \textit{Artificial Networks: A tutorial}\citep{Jain:1996:ANN-AT}}}
+  \label{Fig:cap-marcoteorico:TaxonomyNN}
+\end{figure}
+
+Los NN se clasifican por la forma de conectividad que presentan. Generalmente,
+los \textit{feed-forward} son \textbf{estáticos}, es decir producen un único 
+conjunto de valores de salida para una secuencia de entrada, usan menos
+memoria y son independientes de estados previos de la \textit{network}. 
+\textit{Recurrent}, o los \textit{feedback networks}, son sistemas 
+\textbf{dinámicos} ya que, cuando una nueva entrada se presenta, el resultado
+se ve alterado fruto de la retroalimentacion que sufre la NN. Dentro de la 
+familia de las redes \textit{feed-forward}, se encuentra el \textit{multilayer
+perceptron} que son neuronas organizadas en capas o niveles con conexiones 
+unidireccionales entre ellas.
+
+\subsubsection{Aprendizaje}.
+Los NN pasan por un proceso de aprendizaje que puede ser visto como un
+problema de actualización de una arquitectura de redes de tal forma que se 
+pueda llevar a cabo eficientemente una tarea. La NN, debe de aprender los
+valores de los pesos de las conexiones a partir de un conjunto de patrones 
+proporcionado para el entrenamiento. 
+
+El aprendizaje es un proceso iterativo donde, cada iteración actualiza los
+valores de los pesos basándose en un conjunto de ejemplos (\textit{data 
+training set}) en lugar de seguir reglas especificadas por un grupo de 
+expertos humanos.
+
+Para aprender o diseñar el proceso de aprendizaje; primero se debe tener un 
+modelo del ambiente en el cual la NN operará, conocer el tipo de información
+es punto clave en este paso; luego, se debe de entender como los pesos de las 
+aristas son actualizados, es decir qué reglas dominan el proceso de 
+actualización y por qué son usadas para ajustar los parámetros.
+
+Existen cuatro tipos básicos de reglas de aprendizaje \cite{Jain:1996:ANN-AT}:
+\begin{itemize}
+  \item \textbf{\textit{Error-correction rule}}, que usa el valor de la 
+  diferencia entre la salida del conjunto de entrenamiento con los resultados
+  generados por la NN. El principio del \textit{perceptron} está basado en la 
+  regla de \textit{error-correction}.  
+  \item \textbf{\textit{Boltzmann learning rule}}, cuyo objetivo es ajustar 
+  los pesos de las conexiones de tal forma que los resultados de las neuronas 
+  visibles satisfagan una distribución de probabilidad. En una NN, las
+  neuronas pueden formar parte de dos grupos (Figura~
+  \ref{Fig:cap-marcoteorico:NNLayers}): las neuronas de entrada y salida 
+  (\textit{input and output neurons}) que interactuan con el entorno exterior,
+  y las neuronas ocultos (\textit{hidden neurons}) que transforman el
+  \textit{input} en algo que pueda ser usado por el \textit{output}.
+  \begin{figure}[h!]
+     \centering
+   	\includegraphics[height=4cm]{/Cap:MarcoTeorico/NNLayers}
+     \caption{\textit{Multi-layer perceptron}.}%\tiny{Fuente: \textit{Neural Networks and Statistical Techniques in Marketing Research: A Conceptual Comparison} \cite{Venugopal:1994:NNforMR}}
+     \label{Fig:cap-marcoteorico:NNLayers}
+  \end{figure}
+  
+  Mediante la regla de Boltzmann \cite{Ackley:1985:LAforBM}, cada neurona es 
+  una unidad estocástica que genera una salida, y si se sigue la regla el
+  cambio de peso de las conexiones $w_ij$ está dado por:
+  \begin{equation}
+    \Delta w_{ij} = \eta \left( \widehat{\rho_{ij}} - \rho_{ij} \right)
+  \end{equation}
+siendo $\eta$ es la velocidad de aprendizaje (\textit{learning rate}), 
+$\widehat{\rho_{ij}}$ y $\rho_{ij}$ las correlaciones entre las salidas de las
+neuronas $i$ y $j$ cuando la NN opera en los dos modos de las maquinas de 
+Boltzmann (\textit{clamped mode}\footnote{Las neuronas que forman parte del 
+\textit{input} y \textit{output} están sujetos a operar sobre resultados 
+determinados por el entorno externo.} y \textit{free-running mode}
+\footnote{Las neuronas operan libremente.}). Los valores 
+$\widehat{\rho_{ij}}$ y $\rho_{ij}$ usualmente son estimados de los
+experimentos de Monte Carlo, pero son extremadamente lentos.
+
+Esta regla de aprendizaje puede verse como un caso especial del \textit{error-
+correction rule}, donde el error no es obtenido directamente de las salidas 
+actuales; si no, de las diferencias entre las correlaciones de las salidas 
+para dos neuronas que operan bajo las condiciones de la maquina de Boltzmann.
+  \item \textbf{\textit{Hebbian rule}}, es la regla más antigua de 
+  aprendizaje. Está basado en la observación de experimentos neurobiológicos:
+  ``Si neuronas en ambos lados de la \textit{synapse} son activados
+  síncronamente y el proceso se repite varias veces, la fuerza de la 
+  \textit{synapse} se va incrementando.''
+  
+  Matemáticamente, esta regla puede ser descrita como:
+  \begin{equation}
+  w_{ij} (t + 1) = w_{ij}(t) + \eta y_j(t)x_i(t)
+  \end{equation}
+  donde $y_j$ y $x_i$ son los valores de salida de las neuronas $i$ y $j$ 
+  conectadas por la \textit{synapse} $w_{ij}$, y $\eta$ es la velocidad de 
+  aprendizaje (nótese que $x_i$ es la entrada de la \textit{synapse}).
+  
+  Lo más importante de esta regla es que todo cambio del valor $w_{ij}$ 
+  depende únicamente de las actividades de las dos neuronas conectadas.
+  \item \textbf{\textit{Competitive learning rule}}, a diferencia del 
+  \textit{Hebbian rule}, \textit{competitive learning} suele categorizar los 
+  datos de entrada, de tal forma que patrones similares son agrupados y 
+  representados como unidades simples (esta agrupación es hecha 
+  automáticamente basada en la correlación de la \textit{data}). Básicamente,
+  como se muestra en la Figura~\ref{Fig:cap-marcoteorico:TaxonomyNN}, cada 
+  unidad de salida $i$ está conectada a todas las unidades de entrada $x_j$ 
+  con pesos $w_{ij}, ~j=1,2,\dots,n$; y también, las unidades de salida se 
+  encuentran internconectadas unas con otras. Como resultado, únicamente la 
+  unidad $i^*$ con el valor más grande (o más pequeño) será la representativa;
+  dicho de otra forma, se cumple que 
+  $\mathbf{ w}_{i^*} \mathbf{\cdot x \geq w}_i \cdot \mathbf{x}~ \forall i$. 
+  Matemáticamente, esta regla puede ser expresada mediante la ecuación 
+  \ref{Equ:competitivelearningrule}.
+\begin{equation}
+  \Delta w_{ij} = \left \{
+    \begin{array}{rcl}
+      \eta (x_j - w_{i^*j}), & i = i^* \\
+      0, & i \neq i^*
+    \end{array}
+    \right .
+  \label{Equ:competitivelearningrule}
+\end{equation}
+\end{itemize}
+
+\subsection{\textit{K-means clustering}}
+Dentro de los modelos usados para agrupar la información en base a 
+características (\textit{features}), \textit{K-means clustering}
+\cite{Bishop:2006:PRandML}, es uno de los enfoques no probabilísticos
+usados para buscar \textit{clusters} de un grupo de \textit{data points}.
+
+Formalmente, se puede definir el problema de formar \textit{cluster} como:
+\begin{quotation}
+\small
+\textsl{
+Supóngase que se tiene un \textit{data set} de $n$ observaciones aleatorias
+$\lbrace x_1,~ x_2,~ \dots,~ x_n \rbrace$ definidas como variables euclideanas
+D-dimensionales $x$; donde, el objetivo del problema es agrupar el 
+\textit{data set} en $K$ \textit{clusters} ($K$ es un valor conocido).}
+\end{quotation}
+
+Intuitivamente, se puede pensar que un $k$-ésimo grupo de puntos cumple con la
+condición de que la sumatoria de las distancias hacia un punto medio $\mu_k$ 
+de todos los puntos que pertenecen al grupo es menor comparado con las 
+distancias de puntos que están fuera del \textit{cluster}. \footnote{$\mu_k$ 
+es un vector D-dimensional, donde $k=1,~ 2,~ \dots,~ K$, usado como propotipo
+para el $k^\text{th}$ \textit{cluster}.}
+
+\subsubsection{\textit{K-means algorithm}}
+Definimos una variable binaria $r_{nk} \in \lbrace 0,1 \rbrace $, donde
+$k=1,2,\dots, K$ la cual describe a cual de los $K$ \textit{clusters} se
+asigna un determinado \textit{data point} $x_n$, de tal forma que si el punto
+es asignado al $k$-ésimo \textit{cluster}, el valor de $r_{nk} = 1$, y 
+$r_{nj} = 0$, para $j \neq k$. Ahora, define una función objetivo $J$, llamado 
+a veces \textit{distortion measure} como:
+\begin{equation}
+  J = \sum_{n=1}^N{\sum_{k=1}^K{r_{nk} \cdot \delta (x_n, \mu_{k})}}
+  \label{Equ:J_kmeans}
+\end{equation}
+donde $\delta$ representa una función de distancia que, normalmente es
+considerada como la distancia de euleriana que representa la forma 
+generalizada de la \textbf{distancia de Minkowski} (con parámetro $k=1$)~
+\cite[pág. 353]{Webb:2003:SPR}. %Ver apendice
+Es decir, la función $\delta$ se define como :
+\begin{equation}
+  \delta (x_n, \mu_k) = ||x_n - \mu_k||^2
+\end{equation}
+
+De esta forma, se puede expresar el objetivo del problema como la tarea de
+buscar los valores para $\lbrace r_{nk} \rbrace$ y $\lbrace \mu_k \rbrace$ de
+modo tal que se minimice $J$. Por ello, se debe de determinar los valores
+$r_{nk}$ definidos en (\ref{Equ:KMeans:rnk}).
+
+\begin{equation}
+  r_{nk} = \left \{
+    \begin{array}{rcl}
+      1, & \text{si}~ v = \min_j ||x_n - \mu_j||^2 \\
+      0, & \text{en otro caso}
+    \end{array}
+    \right .
+  \label{Equ:KMeans:rnk}
+\end{equation}
+
+Determinar los valores $r_{nk}$ implica asignar los \textit{data points} a los
+\textit{clusters} más cercanos.
+
+Luego de conocer los valores $r_{nk}$, se tiene que considerar la minimización
+de $J$ con respecto a los valores $\mu_k$ obteniéndose lo siguiente:
+\begin{equation}  
+  \frac{\partial J}{\partial \mu_k} = 0
+  \label{Equ:J-minimization}
+\end{equation}
+
+Resolviendo la derivada parcial de (\ref{Equ:J-minimization}) y reemplazando 
+$J$ por (\ref{Equ:J_kmeans}):
+\begin{equation}
+  \frac{\partial J}{\partial \mu_k} = \frac{\displaystyle\partial \left( \sum_{n=1}^N{\sum_{k=1}^K{r_{nk} ||x_n - \mu_k||^2 }} \right)}{\partial \mu_k}
+\end{equation}
+por la definición de la distancia eucleriana sobre $x_n$ y $\mu_k$ que son
+variables D-dimensionales, donde 
+$x_n = \lbrace x_n^1,~ x_n^2,~ \dots,~ x_n^D \rbrace$ y $\mu_k = \lbrace \mu_k^1,~ \mu_k^2,~ \dots,~ \mu_k^D \rbrace$, $\lbrace x_n^i,~ \mu_k^i \rbrace \in \mathrm{R}$ 
+para $i=1,~ 2,~ \dots,~ D$, se tiene:
+\begin{eqnarray}
+\frac{\partial J}{\partial \mu_k} = \frac{\displaystyle\partial \left( \sum_{n=1}^N{\sum_{k=1}^K{r_{nk} \left(\sqrt{\sum_{i=1}^{D}{(x_n^i - \mu_k^i)^2}} \right)^2 }} \right)}{\partial \mu_k}\\
+\frac{\partial J}{\partial \mu_k} = \frac{\displaystyle\partial \left( \sum_{n=1}^N{\sum_{k=1}^K{r_{nk} {\sum_{i=1}^{D}{(x_n^i - \mu_k^i)^2}}} }\right) }{\partial \mu_k}
+\end{eqnarray}
+derivando con respecto a $u_k$:
+\begin{equation}
+  \frac{\partial J}{\partial \mu_k} = \displaystyle  \sum_{n=1}^N{{r_{nk} {\sum_{i=1}^{D}{2(x_n^i - \mu_k^i) \frac{\partial (-\mu_k)}{\partial \mu_k}} }}}
+\end{equation}
+simplificando, y expresando $x_n^i$ y $\mu_k^i$ nuevamente como variables 
+D-dimensionales:
+\begin{equation}
+  \frac{\partial J}{\partial \mu_k} = \displaystyle  \sum_{n=1}^N{{r_{nk} {2(x_n - \mu_k) (-1)}}}
+  \label{Equ:J-derivated}
+\end{equation}
+reemplazando en (\ref{Equ:J-derivated}) en (\ref{Equ:J-minimization}):
+\begin{equation}
+  \displaystyle  -2\sum_{n=1}^N{{r_{nk} {(x_n - \mu_k)}}} = 0
+\end{equation}
+simplificando el escalar $-2$ y aplicando la propiedad distributiva de la 
+multiplicación con respecto a la suma:
+\begin{equation}
+  \displaystyle  \sum_{n=1}^N{{r_{nk} x_n } - \mu_k\sum_{n=1}^N{{r_{nk}}}} = 0
+\end{equation}
+finalmente, despejando $\mu_k$ se obtiene siguiente la ecuación:
+\begin{equation}
+  \mu_k = \frac{\displaystyle\sum_{n=1}^N{{r_{nk} x_n }}}{\displaystyle \sum_{n=1}^N{{r_{nk}}}}
+  \label{Equ:value-cluster}
+\end{equation}
+
+En la ecuación~(\ref{Equ:value-cluster}) se observa que el valor $\mu_k$ es
+igual a la media aritmética de todos los \textit{data points} asignados al
+$k$-ésimo cluster, razón por la cual este procedimiento es conocido como 
+\textit{K-means algorithm}.
+
+Finalmente, las dos fases definidas son ejecutadas repetídamente un número de 
+veces hasta que el valor de $J$ ya no tenga un cambio significativo, o también
+se puede optar por definir un número de $t$ iteraciones que se deben de llevar
+a cabo.
+  
+%comment
+\commentOut{\section{Análisis de métodos}
+  Basado en los trabajos de investigación \ref{paper_ChengLingLiu1}, se
+  presenta un análisis comparativo entre diferentes metodologías de Machine
+  Learning.
+  \subsection{Clasificadores estadísticos vs Clasificadores discriminantes}
+  Los clasificadores discriminantes están basados en minimizar el error en el
+  proceso de aprendizaje (como las redes neuronales y maquinas de soporte 
+  vectorial).
+  \begin{enumerate}[(a)]%for small alpha-characters within brackets.
+    \item \textbf{Complejidad y flexibilidad en el proceso de entrenamiento}. 
+    El tiempo de entrenamiento de los Clasificadores estadisticos es linear 
+    con respecto al número de clases, mientras que el de los clasificadores
+    discriminativos es proporcional al cuadrado del número de clases.
+    \item \textbf{Precisión de la clasificación}. Entrenados con muchos 
+    ejemplos, Clasificadores Discriminativos presentan un mayor grado de 
+    precision que los clasificadores estadisticos. Y, sobre un pequeño número
+    de ejemplos de entrenamiento, los clasificadores estadisticos presentan un
+    mejor rendimiento.
+    \item \textbf{Complejidad de ejecución y almacenamiento}. Clasificadores 
+    discriminativos tienen una tendencia a tener un menor número de parametros
+    que los estadisticos, por ende representan un menor costo en ejecucion y 
+    almacenamiento.
+    \item \textbf{Confidencia de la decisión}. Las funciones discriminantes
+    sobre clases estadísticas estan conectadas a la probabilidad condicional
+    y usando el teorema de bayes se puede llegar a obtener las probabilidades
+    posteriores. Mientras que, las clases discriminantes estan directamente 
+    relacionadas con las probabilidades posteriores.
+    \item \textbf{Capacidad de rechazo}. Clasificadores que tienen un alto
+    nivel de rechazo tienden a no considerar patrones ambigüos, pero no
+    necesariamente a data que presenta valores atípicos, para los cuales, 
+    clasificadores estadísticos son resistentes, sin embargo los 
+    clasificadores discriminantes son suceptibles debido a que sus regiones
+    de decisión tienden a ser más abiertas.
+  \end{enumerate}
+  \subsection{Redes Neuronales vs Maquinas de Soporte Vectorial}
+  \begin{enumerate}[(a)]
+    \item \textbf{Complejidad en el proceso de entrenamiento}. Debido a que
+    los parámetros en las redes neuronales son ajustados mediante el proceso 
+    de \textbf{gradiente descent}, el entrenamiento es lineal con respecto al
+    número de ejemplos. Por otra parte, las máquinas de soporte vectorial son 
+    entrenadas mediante Programacion Cuadrática, teniendo un proceso de 
+    aprendizaje proporcional al cuadrado del numero de ejemplos.
+    \item \textbf{Flexibilidad del aprendizaje}. Las redes neuronales pueden 
+    ser ajustadas
+  \end{enumerate}
+    \subsection{Supervised, Semi-supervised y Unsupervised Learning}
+    \subsection{Different Approaches}
+    \subsection{Comparission between approaches}
+}
+
+\section{Segmentación de texto en imágenes}
+La segmentación de texto en imágenes, como parte específica del problema de
+segmentación en general, cuenta con una diversidad de enfoques propuestos cada
+uno enfocado de acuerdo a las características del \textit{input}.
+
+La Figura~\ref{cap-marcoteorico:segmentaciontexto} muestra una clasificación
+de métodos para este tipo de segmentación.
+
+\begin{figure}[h!]
+	\centering
+  \includegraphics[scale=0.5]{Cap:MarcoTeorico/Diagram2.eps}
+  \caption{Métodos de segmentación de texto}
+  \label{cap-marcoteorico:segmentaciontexto}
+\end{figure}
+
+\textbf{La segmentación basada en el contorno} aplica filtros (\textit{stroke
+filter, wavelet, high variance}) y principios geométricos (orientación, 
+escala), mientras que \textbf{la segmentación basada en colores} busca 
+aprovechar características relacionadas al color que exhiben los pixeles
+(histogramas, entropía, textura).
+
+Dentro de los métodos basados en colores, encontramos \textbf{la segmentación
+que usa un \textit{threshold}} que tomará un imagen en escala de grises y la
+filtrará  para obtener una en blanco y negro, donde el blanco signifique el
+\textit{background} y el negro el texto, o viceversa. En la mayoría de casos, 
+este método es usado para manejar imágenes que hayan sido generadas por un 
+procesador de texto. Los métodos más significativos de este enfoque son: 
+\textit{Otsu's method} y \textit{Niblack's method}.\cite{Sezgin:2004:Survey}
+
+Luego, se tiene la \textbf{segmentación basada en \textit{Machine Learning} 
+(ML)} que a su vez puede dividirse como: \textbf{\textit{Supervisado}}, donde 
+se busca una función a partir de un \textit{training data set} que luego 
+recibirá pixeles para clasificarlos como ``texto'' o ``no-texto''; y
+\textbf{\textit{no supervisado}}, cuya tarea es encontrar una similitud entre
+los pixeles para formar grupos y luego determinar que grupo (o grupos) 
+corresponde al ``texto''.
+
+\section{Reglas heurísticas}
+Una heurística es una regla que provee de un atajo para resolver problemas 
+difíciles. Las reglas heurísticas son usadas cuando se tienen límites de
+tiempo y/o información para tomar una decisión.
+\subsection{Algoritmos heurísticos}
+  En el mundo de la computación, los tópicos más importantes comprenden: La 
+  validación de algoritmos, la estimación de complejidad y la optimización. La
+  complejidad algorítmica es un área muy estudiada cuya relevancia yace en la 
+  ejecución del algoritmo con respecto al tiempo y espacio empleado. Muchas 
+  veces se tiene que buscar soluciones a problemas cuyas cotas son bastante 
+  grandes, donde un algoritmo que calcule resultados óptimos globales no es 
+  aceptable, para lo cual se buscan algoritmos que calculen soluciones 
+  aproximadas o parciales. Los algoritmos heurísticos, son aquellos que 
+  sugieren soluciones aproximadas a los problemas de optimización, donde el
+  objetivo es buscar la solución óptima sobre todas las posibles soluciones 
+  (la cual se puede definir como una función objetivo).\footnote{Mayormente se
+  usan algoritmos heurísticos en problemas de la clase NP.}
