@@ -1,18 +1,32 @@
 \chapter{TEORÍA DE PROBABILIDADES Y PROCESAMIENTO DE IMÁGENES}
 \label{cap:marcoteorico}
 \setcounter{secnumdepth}{0}
-%\section{Introducción}
-  En este capítulo se describirán algunos temas considerados como material de 
-  importancia brindando conceptos claves para el desarrollo del trabajo de 
-  tesis, como teoría acerca de Procesamiento Digital de Imágenes, algoritmos 
-  heurísticos, \textit{Machine Learning}, y los algoritmos \textit{K-means} 
-  y \textit{Unionf find}.
-
+  En el presente capítulo se describirán algunos temas considerados como 
+  importantes por brindar los conceptos claves para el desarrollo del trabajo de 
+  tesis. La sección~\ref{sec:teoria-probabilidades} y 
+  ~\ref{sec:procesamiento-imagenes} describirán conceptos básicos sobre teoría de 
+  probabilidades y procesamiento de imágenes respectivamente, mientras que, la
+  sección~\ref{sec:basics-swt} describirá el enfoque del SWT. Los conceptos de 
+  conectividad serán descritos en la sección~\ref{sec:conectividad} y la 
+  estructura de datos \textit{Disjoint-Sets} tanto como el algoritmo 
+  \textit{Union-Find} estarán detallados en la sección ~\ref{sec:disjoint-sets}.
+  Por último, las secciones ~\ref{sec:machine-learning}, 
+  ~\ref{sec:segmentacion-texto-imagenes}, y ~\ref{sec:heuristicas} describirán 
+  conceptos de \textit{Machine Learning}, segmentación de texto en 
+  imágenes, y heurísticas.
+  %como teoría acerca de Procesamiento Digital de Imágenes, algoritmos 
+  %heurísticos, \textit{Machine Learning}, y los algoritmos \textit{K-means} 
+  %y \textit{Unionf find}.
+  %Dada la importancia de algunos conceptos básicos, se consideró dividir el
+  %marco teórico en tres capítulos.
+  %Debido a la importancia de algunos temas, se consideró el desarrollo de 
+  %conceptos básicos de probabilidades y procesamiento de imágenes.
 \setcounter{secnumdepth}{3}  
 %%
 %%Teoria de Probabilidades
 %%
 \section{Teoría de Probabilidades}
+\label{sec:teoria-probabilidades}
   \begin{defn}[Espacio Muestral] Sea $\Omega$ el conjunto de todos los 
   posibles eventos. Asumamos $S$ como un subconjunto de eventos a los cuales 
   se asignan probabilidades. Formalmente, cada evento $\alpha \in S$ es un 
@@ -63,6 +77,7 @@
 %%Procesamiento de Imagenes
 %%
 \section{Procesamiento de Imágenes}
+\label{sec:procesamiento-imagenes}
 %Dr. Brian Mac Namee-http://www.comp.dit.ie/bmacnamee/gaip.htm
 Según el Dr. Brian Mac Namee, el procesamiento de imágenes viene a ser un 
 conjunto de técnicas que son usadas para mejorar la información pictográfica 
@@ -347,7 +362,7 @@ $k = 0,~ 1,~ 2,~ 3,~ 4~ \text{y}~5$; donde para $k=3$ $\sigma_B^2$ es máximo.
 \subsubsection{\textit{Niblack's method}}
 	\textit{Niblack's method}\cite{Niblack:1985:IDI} es un \textit{local 
 	thresholding algorithm} que adapta el \textit{threshold} para cada
-	\textit{pixel} de acuerdo a la media y la desviación estándar sobre una 
+	\textit{pixel} de acuerdo a la media y desviación estándar sobre una 
 	ventana de tamaño específico. 
 	El \textit{threshold} para un \textit{pixel} $P$ en la posición $(x, ~y)$ 
 	está dado por:
@@ -364,9 +379,9 @@ $k = 0,~ 1,~ 2,~ 3,~ 4~ \text{y}~5$; donde para $k=3$ $\sigma_B^2$ es máximo.
 	original del algoritmo $c$ es igual a $0$. 
 	
 	La Figura~\ref{Fig:Cap-marcoteorico:niblack} muestra un ejemplo de los 
-	resultados obtenidos mediante el \textit{Niblack's method} haciendo variar 
-	el tamaño de las ventanas para los cálculos de los estadísticos usados en el
-	enfoque. 
+	resultados obtenidos mediante el \textit{Niblack's method} al ser aplicado
+	sobre la imagen de la Figura~\ref{Fig:Cap-marcoteorico:otsu.a}.% con dos diferentes
+%	tamaños de ventana usada para los cálculos de los estadísticos.
 		
 	\begin{figure}[h!]
 	\centering
@@ -433,7 +448,7 @@ Dentro de los cuales podemos encontrar los siguiente métodos:
   \end{figure}
 
 \section{\textit{Basis of SWT approach}}
-
+\label{sec:basics-swt}
 \subsection{\textit{Stroke}}
 Un \textit{stroke} es una parte continua dentro de la imagen que forma una
 banda cuyo ancho se mantiene aproximadamente constante (ver 
@@ -448,7 +463,8 @@ Figura~\ref{Fig:cap-marcoteorico:Stroke});
 \end{figure}
 
 \subsection{\textit{Convolution operator} ($\otimes$)}
-Es una forma de multiplicar dos arreglos de números, generalmente de 
+La convolución \cite{Gonzalez:2000:PID, Marques:1999:PDI, Castleman:1996:DIP,Harley:1993:HandBook}, 
+es una forma de multiplicar dos arreglos de números, generalmente de 
 diferentes tamaños pero definidos en el mismo dominio $D$ para producir un 
 tercer arreglo de números definido en $D$.
 En el procesamiento de imágenes, el primer arreglo generalmente es una imagen
@@ -494,6 +510,7 @@ donde:
 \noindent siendo $\frac{\delta}{\delta x} = [1, -1]$, $\frac{\delta}{\delta y} = [1, -1]'$, y $S = [1, 1]'$ (Figura~\ref{Fig:cap-marcoteorico:Paris-grad}).
 
 \section{Conectividad}
+\label{sec:conectividad}
 \subsection{\textit{Digital Plane}}
 Un plano digital\cite{Biswas:2010:IsoCovers}, $\mathrm{Z}^2$, es un conjunto 
 de puntos que tienen coordenadas enteras definidas en el plano $\mathrm{R}^2$.
@@ -548,6 +565,7 @@ una propiedad específica, generalmente esta propiedad está relacionada al
 color de los \textit{pixels}. 
 
 \section{\textit{Disjoint-Sets}}
+\label{sec:disjoint-sets}
 \textit{Disjoint-Sets} es una estructura de datos para modelar una colección
 conjuntos disjuntos (\textit{disjoint sets}) de un modo eficiente, con
 prácticamente una complejidad $\approx O(1)$ para determinar a qué conjunto 
@@ -703,6 +721,7 @@ el valor de 1 (Tabla~\ref{Tab:Cap-marcoteorico:lg*n}).
 \nocite{UF:proof2}
 
 \section{\textit{Machine Learning}}
+\label{sec:machine-learning}
 	El aprendizaje automático (\textit{Machine Learning}) es una rama de la 
 	Inteligencia Artificial cuyo principal objetivo es dar a las computadoras la
 	posibilidad de modificar o adaptar sus acciones para lograr mayor exactitud 
@@ -1093,6 +1112,7 @@ a cabo.
 }
 
 \section{Segmentación de texto en imágenes}
+\label{sec:segmentacion-texto-imagenes}
 La segmentación de texto en imágenes, como parte específica del problema de
 segmentación en general, cuenta con una diversidad de enfoques propuestos cada
 uno enfocado de acuerdo a las características del \textit{input}.
@@ -1130,6 +1150,7 @@ los pixeles para formar grupos y luego determinar que grupo (o grupos)
 corresponde al ``texto''.
 
 \section{Reglas heurísticas}
+\label{sec:heuristicas}
 Una heurística es una regla que provee de un atajo para resolver problemas 
 difíciles. Las reglas heurísticas son usadas cuando se tienen límites de
 tiempo y/o información para tomar una decisión.
