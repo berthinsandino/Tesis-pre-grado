@@ -1,12 +1,7 @@
 \chapter{SEGMENTACIÓN Y RECONOCIMIENTO DE TEXTO EN IMÁGENES}
 \label{cap-reconocimiento}
 \setcounter{secnumdepth}{0}
-interés y de mayor importancia debido a que la tercer fase (de reconocimiento)
-dependerá críticamente de los resultados que se hayan obtenido préviamente. El
-diagrama de flujo bajo el cual se desarrollará el enfoque propuesto se puede
-observar en la Figura~\ref{fig:workflow}.
-
-Durante los últimos años, varios trabajos relacionados al área de RTI
+Durante los últimos años, diversos trabajos relacionados al área de RTI
 (Reconocimiento de Texto en Imágenes) fueron presentados usando diversos
 enfoques y metodologías. La gran mayoría basado en técnicas supervisadas y no
 supervisadas debido a que estos presentaron buenos resultados.% positivos.
@@ -30,16 +25,16 @@ ASCII.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[height=15cm]{Cap:Reconocimiento/workflow_Reconocimiento}
-	\caption{Diagrama de flujo para proceso de RTI.}
+	\caption{Diagrama de flujo para proceso de RTI. Algunos trabajos presentan las fases
+	de Pre-procesamiento y Segmentación de Texto como una sola.}
 	\label{fig:cap-reconocimiento:workflowtodo}
 \end{figure}
 
-A continuación, se presenta un resumen de los \textit{papers} en los cuales está
-basado el enfoque propuesto. Se consideró abordar el problema de reconocimiento
-de texto en imágenes, así como el problema de reconocimiento de texto en placas
-de automóviles por presentar algunas similitudes con respecto al trabajo de
-tesis.%considerarse como un problema parecido al presentado en el presente
-documento.
+A continuación, se presenta un resumen de los principales \textit{papers} sobre 
+los cuales está basado el enfoque propuesto. Se consideró abordar el problema 
+de reconocimiento de texto en imágenes, así como el problema de reconocimiento 
+de texto en placas de automóviles por presentar algunas similitudes con respecto
+al trabajo de tesis.
 
 \setcounter{secnumdepth}{3}
 \section{Trabajos relacionados}
@@ -136,7 +131,7 @@ una ventana de $4 \times 4$ (la cual es dividida en 4 partes:
 superior-izquierda, superior-derecha, inferior-izquierda e inferior-derecha) con
 el objetivo filtar aquellas partes que no contengan ningún \textit{pixel} en
 todas las partes de la ventana. Luego, se forman componentes a partir de la
-imágen resultado de la unión de los resultados de las tres imágenes que fueron
+imagen resultado de la unión de los resultados de las tres imágenes que fueron
 unidas mediante el operador binario \textit{OR}. Cada componente es analizada
 haciendo uso del \textit{vertical projection} y \textit{horizontal projection},
 dejando regiones compuestas que posiblemente sean texto. Para cada región se usa
