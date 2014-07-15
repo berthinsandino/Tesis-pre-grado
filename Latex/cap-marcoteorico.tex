@@ -14,26 +14,20 @@
   ~\ref{sec:segmentacion-texto-imagenes}, y ~\ref{sec:heuristicas} describirán 
   conceptos de \textit{Machine Learning}, segmentación de texto en 
   imágenes, y heurísticas.
-  %como teoría acerca de Procesamiento Digital de Imágenes, algoritmos 
-  %heurísticos, \textit{Machine Learning}, y los algoritmos \textit{K-means} 
-  %y \textit{Unionf find}.
-  %Dada la importancia de algunos conceptos básicos, se consideró dividir el
-  %marco teórico en tres capítulos.
-  %Debido a la importancia de algunos temas, se consideró el desarrollo de 
-  %conceptos básicos de probabilidades y procesamiento de imágenes.
-\setcounter{secnumdepth}{3}  
+\setcounter{secnumdepth}{3}
+
 %%
 %%Teoria de Probabilidades
 %%
 \section{Teoría de Probabilidades}
 \label{sec:teoria-probabilidades}
   \begin{defn}[Espacio Muestral] Sea $\Omega$ el conjunto de todos los 
-  posibles eventos. Asumamos $S$ como un subconjunto de eventos a los cuales 
-  se asignan probabilidades. Formalmente, cada evento $\alpha \in S$ es un 
+  posibles eventos. Asumiendo $S$ como un subconjunto de eventos a los cuales 
+  se asignan probabilidades; formalmente, cada evento $\alpha \in S$ es un 
   subconjunto de $\Omega$
   \end{defn}
  En teoría de probabilidades, se requiere que, dado un espacio, los eventos 
- cumplan con tres características:
+ cumplan con las siguientes tres características:
   \begin{itemize}
     \item Se tiene el evento vacío $\emptyset$ y el evento trivial $\Omega$.
     \item Se cumple la cerradura con respecto a la unión, es decir, si 
@@ -79,7 +73,8 @@
 \section{Procesamiento de Imágenes}
 \label{sec:procesamiento-imagenes}
 %Dr. Brian Mac Namee-http://www.comp.dit.ie/bmacnamee/gaip.htm
-Según el Dr. Brian Mac Namee, el procesamiento de imágenes viene a ser un 
+Según el Dr. Brian Mac Namee\footnote{\url{http://www.comp.dit.ie/bmacnamee/gaip.htm}}, 
+el procesamiento de imágenes viene a ser un 
 conjunto de técnicas que son usadas para mejorar la información pictográfica 
 de una imagen para su posterior interpretación, como también viene a ser el 
 proceso de almacenamiento, transmisión y representación de imágenes para ser 
@@ -103,16 +98,16 @@ relacionados a las transformaciones sobre imágenes.
 \begin{minipage}{\textwidth}
   \centering
   \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.a}\includegraphics[height=35mm]{/Cap:MarcoTeorico/FotosCalles_30.jpg}}{ }
-  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.b}\includegraphics[height=35mm]{/Cap:MarcoTeorico/GrayScale_FotosCalles_30.jpg}}{ }
-  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.c}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Invert_FotosCalles_30.jpg}}
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.b}\includegraphics[height=35mm]{/Cap:MarcoTeorico/GrayScale_FotosCalles_30.png}}{ }
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.c}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Invert_FotosCalles_30.png}}
   \\
-  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.d}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Levels_FotosCalles_30.jpg}}{ } 
-  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.e}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Levels-Histograma_FotosCalles_30.jpg}}
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.d}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Levels_FotosCalles_30.png}}{ } 
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.e}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Levels-Histograma_FotosCalles_30.png}}
   \\
-  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.f}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Threshold_FotosCalles_30.jpg}}{ }
-  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.g}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Threshold-Histograma_FotosCalles_30.jpg}}
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.f}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Threshold_FotosCalles_30.png}}{ }
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.g}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Threshold-Histograma_FotosCalles_30.png}}
   \\
-  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.h}\includegraphics[height=35mm]{/Cap:MarcoTeorico/AfterProc_FotosCalles_30.jpg}}{ }
+  \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.h}\includegraphics[height=35mm]{/Cap:MarcoTeorico/AfterProc_FotosCalles_30.png}}{ }
   \subfloat[]{\label{Fig:Cap-marcoteorico:7VentanasTransformaciones.i}\includegraphics[height=35mm]{/Cap:MarcoTeorico/Segmentado_FotosCalles_30.jpg}}
   
   \caption[Transformaciones sobre letrero   Siete Ventanas]{Transformaciones 
@@ -173,8 +168,8 @@ relacionados a las transformaciones sobre imágenes.
   \subsection{Transformadas}
   	\subsubsection{RGB a HSV}
   		No existe una transformación lineal para transformar del modelo de color
-  		RGB al HSV. Sin embargo, la idea principal del algoritmo de conversión 
-  		es presentada en \cite{Eugene:Color}.
+  		RGB al HSV. Sin embargo, puede hacerse referencia a \cite{Eugene:Color} 
+  		para tener una idea del posible algoritmo de conversión.
     \subsubsection{RGB a \textit{GRAY}}
       Muchas veces se requiere transformar una imagen de color RGB a escala 
       de grises (\textit{gray-scale}). Sabiendo que la escala de grises está 
@@ -396,7 +391,7 @@ $k = 0,~ 1,~ 2,~ 3,~ 4~ \text{y}~5$; donde para $k=3$ $\sigma_B^2$ es máximo.
 	\end{figure}
 	
 	La forma de determinar la clase a la cual pertenecerá un determinado
-	\textit{pixel} $P$ se muestra en \ref{Equ:niblack}.
+	\textit{pixel} $P$ se muestra en (\ref{Equ:niblack}).
 	\begin{equation}
 		P = P > T(P) ~?~ \textit{foreground} : \textit{background}
 		\label{Equ:niblack}
@@ -521,8 +516,7 @@ Un punto en el plano digital es conocido como \textit{digital point} o tambien
 El conjunto de puntos vecinos (Figura~\ref{Fig:cap-marcoteorico:N-connected}) 
 adyacentes a un punto $p(x,y) \in \mathrm{Z}^2$ se denomina 
 \textit{4-connectedneighborhood} de p, denotado por: 
-$N_4(p) = \lbrace (x', y') ~/~ (x', y') \in \mathrm{Z}^2 \wedge |x - x'| + |y - y'| = 1 \rbrace$. %, donde $\delta_H$ representa la \textbf{distancia Hamiltoneana}. 
-
+$N_4(p) = \lbrace (x', y') ~/~ (x', y') \in \mathrm{Z}^2 \wedge |x - x'| + |y - y'| = 1 \rbrace$.
 El conjunto de todos los \textit{8-connected} de $p$ esta dado por:
 $N_8(p) = \lbrace (x', y') ~/~ (x', y') \in \mathrm{Z}^2 \wedge \max ( |x - x'|, |y - y'| ) = 1 \rbrace$.
 
@@ -598,7 +592,7 @@ operaciones:
 Supóngase que se agregue un \textit{constrain} al problema especificado. Cada
 conjunto debe de tener un elemento representativo. 
 Así, el problema original se reduce a construir un bosque donde cada árbol 
-representará un conjunto y el nodo raíz del árbol será el elemento 
+representará un conjunto y el nodo raiz del árbol será el elemento 
 representativo del conjunto; por consiguiente, la operación \textit{Find} 
 puede ser llevada a cabo mediante una búsqueda \textit{bottom-up} y la 
 operación \textit{Union} (Figura~\ref{fig:cap-segmentacion:UF_tree}) solo 
@@ -625,7 +619,7 @@ nodo raiz del árbol.
   \centering
   \includegraphics[width=7cm]{Cap:Segmentacion/tree_representation_graph}\\
   \includegraphics[width=7cm]{Cap:Segmentacion/tree_representation_array}
-	\caption{Representación del \textit{forest}.}
+	\caption{Representación de una estructura del tipo \textit{forest}.}
 	\label{fig:cap-segmentacion:forest_representacion}
 \end{figure}
 
@@ -653,13 +647,13 @@ dirigida la arista. Para ello, se analiza los dos posibles casos
 
 Si se llegase a considerar el primer caso, para cada consulta que se realice
 sobre $T_1$, el número de iteraciones llevadas a cabo por la búsqueda
-\textit{bottom-up} para encontrar el nodo raíz se incrementará en una unidad.
+\textit{bottom-up} para encontrar el nodo raiz se incrementará en una unidad.
 Si se llegase a considerar el segundo caso, el número de iteraciones para los
 elementos de $T_2$ se incrementaría en una unidad. Dicho de otra forma, 
 considerando que $T_1$ y $T_2$ sean árboles de altura igual a uno, si se
 realizan consultas sobre todos los elementos de cada árbol, para el primer
-caso se llevarían a cabo $2 \cdot n_1 + n_2$ mientras que para el segundo
-caso se llevarían a cabo $n_1 + 2 \cdot n_2$. Como $n_1 > n_2$, el número de 
+caso se llevarían a cabo $2 n_1 + n_2$ mientras que para el segundo
+caso se llevarían a cabo $n_1 + 2 n_2$. Como $n_1 > n_2$, el número de 
 consultas llevadas a cabo en el primer caso es mayor al número de consultas 
 que se llevarían en el segundo caso. Por lo tanto, en vez de crear la arista
 de manera aleatória, se debe de considerar el número de elementos de cada
@@ -667,7 +661,7 @@ de manera aleatória, se debe de considerar el número de elementos de cada
 
 \subsubsection{\textit{Path compression}}
 Dado que, la operación \textit{Find} tiene como objetivo, para un nodo
-$p \in T$, buscar el elemento $root_T$ que represente la raíz del árbol $T$,
+$p \in T$, buscar el elemento $root_T$ que represente la raiz del árbol $T$,
 es decir, se debe encontrar un camino $w$ de tal forma que 
 $w = p\rightarrow q_1 \rightarrow q_2 \dots \rightarrow q_m \rightarrow root_T$. 
 Suponiendo que se lleven a cabo futuras consultas sobre los nodos
@@ -687,7 +681,7 @@ el proceso de actualización de padres para cada nodo en $w$.
 	\subfloat[]{\includegraphics[width=5cm]{Cap:Segmentacion/UF_pathA}\label{fig:cap-segmentacion:UF_path.a}} { \, \, \, \, }
   \subfloat[]{\includegraphics[width=5cm]{Cap:Segmentacion/UF_pathB}\label{fig:cap-segmentacion:UF_path.b}} \\ 
 	\caption[\textit{Path compression}]{\textit{Path compression}. (a) Búsqueda 
-	del camino del nodo $9$ a la raíz. (b) Árbol comprimido.}
+	del camino del nodo $9$ a la raiz. (b) Árbol comprimido.}
 	\label{fig:cap-segmentacion:UF_path}
 \end{figure}
 
@@ -957,7 +951,7 @@ Formalmente, se puede definir el problema de formar \textit{cluster} como:
 Supóngase que se tiene un \textit{data set} de $n$ observaciones aleatorias
 $\lbrace x_1,~ x_2,~ \dots,~ x_n \rbrace$ definidas como variables euclideanas
 D-dimensionales $x$; donde, el objetivo del problema es agrupar el 
-\textit{data set} en $K$ \textit{clusters} ($K$ es un valor conocido).}
+\textit{data set} en $K$ \textit{clusters} siendo $K$ es un valor conocido.}
 \end{quotation}
 
 Intuitivamente, se puede pensar que un $k$-ésimo grupo de puntos cumple con la
@@ -1130,7 +1124,7 @@ de métodos para este tipo de segmentación.
 \textbf{La segmentación basada en el contorno} aplica filtros (\textit{stroke
 filter, wavelet, high variance}) y principios geométricos (orientación, 
 escala), mientras que \textbf{la segmentación basada en colores} busca 
-aprovechar características relacionadas al color que exhiben los pixeles
+aprovechar características relacionadas al color que exhiben los \textit{pixels}
 (histogramas, entropía, textura).
 
 Dentro de los métodos basados en colores, encontramos \textbf{la segmentación
@@ -1142,11 +1136,11 @@ procesador de texto. Los métodos más significativos de este enfoque son:
 \textit{Otsu's method} y \textit{Niblack's method}.\cite{Sezgin:2004:Survey}
 
 Luego, se tiene la \textbf{segmentación basada en \textit{Machine Learning} 
-(ML)} que a su vez puede dividirse como: \textbf{\textit{Supervisado}}, donde 
+(ML)} que a su vez puede dividirse como: \textbf{\textit{supervisado}}, donde 
 se busca una función a partir de un \textit{training data set} que luego 
-recibirá pixeles para clasificarlos como ``texto'' o ``no-texto''; y
+recibirá \textit{pixels} para clasificarlos como ``texto'' o ``no-texto''; y
 \textbf{\textit{no supervisado}}, cuya tarea es encontrar una similitud entre
-los pixeles para formar grupos y luego determinar que grupo (o grupos) 
+los \textit{pixels} para formar grupos y luego determinar que grupo (o grupos) 
 corresponde al ``texto''.
 
 \section{Reglas heurísticas}
@@ -1166,4 +1160,4 @@ tiempo y/o información para tomar una decisión.
   sugieren soluciones aproximadas a los problemas de optimización, donde el
   objetivo es buscar la solución óptima sobre todas las posibles soluciones 
   (la cual se puede definir como una función objetivo).\footnote{Mayormente se
-  usan algoritmos heurísticos en problemas de la clase NP.}
+  usan algoritmos heurísticos para resolver problemas de la clase NP.}
