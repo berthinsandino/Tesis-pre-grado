@@ -4,15 +4,15 @@
 \setcounter{secnumdepth}{0}
 %\section{Introducción}
 
-Una vez se tenga una imagen que haya sido sometida a la fase de pre-
-procesamiento (Capítulo~\ref{cap-preprocesamiento}), podemos encarar el problema
- desde otro punto de vista puesto que únicamente se tendrán \textit{pixels} 
- azules de diferentes tonalidades los cuales deben de ser etiquetados como 
- \textit{background} o \textit{foreground}.
+Una vez se tenga una imagen que haya sido sometida a la fase de pre-procesamiento
+(Capítulo~\ref{cap-preprocesamiento}), podemos encarar el problema
+desde otro punto de vista puesto que únicamente se tendrán \textit{pixels} 
+azules de diferentes tonalidades los cuales deben de ser etiquetados como 
+\textit{background} o \textit{foreground}.
 
-El presente capítulo, tiene como finalidad presentar el enfoque propuesto para 
-dar solución al problema de segmentación de texto mediante el uso de la 
-estructura de datos \textit{Disjoint-sets} y \textit{K-means clustering}.
+El presente capítulo, tiene como finalidad presentar la fase de segmentación
+del enfoque propuesto mediante el uso de la estructura de datos 
+\textit{Disjoint-sets} y \textit{K-means clustering}.
 
 \setcounter{secnumdepth}{3}
 \section{\textit{Disjoint-Sets}}
@@ -46,7 +46,7 @@ Con la finalidad de formar las componentes, para un \textit{pixel} $P$ en la
 Una forma de determinar si dos componentes adyacentes pueden unirse, es mediante
  el uso de una función $\delta_{\mathtt{UF}} (\varsigma (C_1), \varsigma (C_2))$
   (\ref{Eq:distComp}) que calcule la distancia entre los colores de las 
-  componentes. Siendo $C_1$ y $C_2$ serán las posiciones de los pixeles 
+  componentes. Siendo $C_1$ y $C_2$ las posiciones de los \textit{pixels} 
   representativos de cada componente y $\varsigma(C_i)$ indica el color de $C_i$. 
 \begin{equation}
 	\delta_{\mathtt{UF}}:R^3\times R^3 \rightarrow R^h
@@ -85,7 +85,7 @@ El algoritmo para formar las componentes dada una imagen de $W\times H$
 \section{\textit{K-means clustering}}
 
 En el problema de segmentación, nuestro objetivo es enfocarnos en agrupar 
-pixeles de tal forma que podamos reducir el rango que cada \textit{pixel} toma 
+\textit{pixels} de tal forma que podamos reducir el rango que cada \textit{pixel} toma 
 como valor. Una vez que se tenga un rango manejable, es factible llevar a cabo 
 cálculos para determinar el color (o colores) del patrón que se esté buscando. 
 De modo que, cada \textit{pixel} es clasificado de acuerdo a las características 
@@ -93,12 +93,12 @@ de color que posee sin considerar restricciones de localización, o algún otro
 tipo de ajuste de parámetro como en los enfoques supervisados.
 
 En el caso de la segmentación de texto, este método es independiente al 
-lenguaje; el tipo, tamaño, y estilo de la fuente; y no recibe influencia 
+lenguaje; el tipo, tamaño, y estilo de fuente; y no recibe influencia 
 negativa de \textit{pixels} adyacentes. Sin embargo, esta última característica
- puede o no cumplirse satisfactoriamente debido a la agrupación de componentes 
- que se realizó con el Algoritmo~\ref{alg:formar-componentes}. En gran medida 
- dependerá del valor $\varphi$ y la función $\delta_{\mathtt{UF}}$ que se 
- definan.
+puede o no cumplirse satisfactoriamente debido a la agrupación de componentes 
+que se realizó con el Algoritmo~\ref{alg:formar-componentes}. En gran medida 
+dependerá del valor $\varphi$ y la función $\delta_{\mathtt{UF}}$ que se 
+definan.
 
 De este modo, el algoritmo sería el siguiente:
 \lstinputlisting[caption=K-means, style=customc, label=alg:k-means]{pseudocodigo/codigo2.cod}
