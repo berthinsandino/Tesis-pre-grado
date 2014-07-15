@@ -5,23 +5,25 @@
 %\section{Introducción}
 
 La segmentación de texto en imágenes implica separar los \textit{pixels} 
-pertenecientes al texto del los \textit{pixels} que forman parte del
-\textit{background}, este proceso representa una parte crítica en cualquier
+pertenecientes al texto (\textit{foreground}) de los \textit{pixels} que forman 
+parte del \textit{background}, este proceso representa una parte crítica en cualquier
 módulo de reconocimiento de texto.
 
-El presente trabajo, se encuentra centrado en el problema de segmentación 
-dejando de lado la fase de reconocimiento de texto para trabajos futuros.
+Dado que elfoco central del trabajo es el problema de segmentación 
+(dejando de lado la fase de reconocimiento de texto para trabajos futuros), en
+la siguiente sección se presentará el enfoque propuesto, dejando el desarrollo
+para los capítulos dos siguientes capítulos.
 
 \setcounter{secnumdepth}{3}
 \section{Enfoque propuesto}
 
 El problema de segmentación será abordado en tres fases (Figura~\ref{fig:cap-reconocimiento:workflowenfoque}):
 \begin{itemize}
-	\item La primera fase llevará a cabo procesos que filtren características
+	\item La primera fase (Pre-procesamiento) llevará a cabo procesos que filtren características
 	que no nos sean útiles.
-	\item La segunda fase llevará a cabo el proceso de segmentación así como 
+	\item La segunda fase (Segmentación de Texto) llevará a cabo el proceso de segmentación así como 
 	localización eliminando aquellas regiones que no formen parte del texto.
-	\item La tercera fase será la encarga de filtrar componentes falsos 
+	\item La tercera fase (Post-procesamiento) será la encarga de filtrar componentes falsos 
 	positivos.
 \end{itemize}
 
