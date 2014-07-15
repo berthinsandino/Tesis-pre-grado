@@ -2,7 +2,7 @@
 \label{cap-resultados}
 
 \section{Pre-procesamiento}
-En vista del objetivo de la fase de pre-procesamiento es eliminar regiones de la
+En vista que el objetivo de la fase de pre-procesamiento es eliminar regiones de la
 imagen cuya información no sea relevante para el proceso de segmentación de 
 texto, se optó por realizar pruebas en base a los métodos expuestos en el 
 Capítulo~\ref{cap-preprocesamiento} con la finalidad de escoger los métodos a 
@@ -12,8 +12,8 @@ La Tabla~\ref{tab:Cap-resultados:Comparativo:ColorFiltering}, expone las razones
 por las cuales se elige el enfoque \textit{ad-hoc} para la etapa \textit{color 
 filtering}. De igual forma, la Tabla~\ref{tab:Cap-resultados:Comparativo:SmoothingSpatialFilter}, 
 expone las razones por las cuales se elige el filtro de la Mediana en la etapa
-\textit{smoothing spatial filter}. Finalmente, en la Tabla~\ref{tab:Cap-resultados:Comparativo:Thresholding}, 
-se presentan las razones por las cuales se prefiere el uso del \textit{Niblack's
+\textit{smoothing spatial filter}. Y finalmente, en la Tabla~\ref{tab:Cap-resultados:Comparativo:Thresholding}, 
+se presentan las razones por las que se prefiere el uso del \textit{Niblack's
 method} sobre el \textit{Otsu's method} pese a su complejidad para determinar el 
 valor del \textit{thresholding}.
 
@@ -172,6 +172,7 @@ pre-Procesamiento, sub-fase \textit{Thresholding}}
 \end{table}
 \end{center}
 
+%\clearpage
 \section{Segmentación de Texto}
 \subsection{\textit{Disjoint-sets}}
 La estructura de datos Disjoint-set premite formar imágenes con regiones 
@@ -274,7 +275,7 @@ consideraron las siguientes reglas:
 	la componente.
 \end{enumerate}
 
-La primera regla, es usada para limpiar pequeños grupos de pixeles que hayan
+La primera regla, es usada para limpiar pequeños grupos de \textit{pixels} que hayan
 pasado los filtros anteriores. La segunda regla filtra las componentes tales
 como líneas o fechas. Mientras que la tercera regla, se encarga de eliminar
 \textit{frames} (Figura~\ref{Fig:cap-resultados:refinement}).
@@ -296,13 +297,13 @@ buscaron \textit{papers} con respecto a la ICDAR Text Location Competition, y se
 encontró que el enfoque SWT presentó un buen \textit{performance} sobre otros
 algoritmos para las ediciones ICDAR 2003 y 2005.
 
-Para formar el \textit{data test set}, se juntó un total de 91 fotografías 
-aleatóriamente capturadas mas 1 imagen generada mediante un \textit{image
-manipulator program}. Como se determinaron 3 \textit{clusters}, yace la
-necesidad buscar una forma de elegir sobre un subconjunto de ellos. Por
-simplicidad, se trabajó sobre los tres \textit{clusters} y las combinaciones que
-podrían ser generadas debido a que cada \textit{cluster} representa un grupo de
-componentes y posee un valor RGB.
+Para formar el \textit{data test set}, de un conjunto de 120 fotografías,
+se juntó un total de 91 fotografías aleatóriamente capturadas (más una imagen 
+generada mediante un programa de manipulación de imágenes). Como se determinaron 
+3 \textit{clusters}, yace la necesidad buscar una forma de elegir sobre un 
+subconjunto de ellos. Por simplicidad, se trabajó sobre los tres \textit{clusters}
+y las combinaciones que podrían ser generadas debido a que cada \textit{cluster} 
+representa un grupo de componentes y posee un valor RGB.
 
 Transformando cada valor RGB a \textit{gray-scale}, es factible usar un 
 \textit{sort} y únicamente operar sobre $\nCr{3}{1} +
@@ -388,7 +389,7 @@ algunas imágenes presentan regiones que no forman parte del texto
 \centering
 \setlength{\fboxsep}{0pt}
 \subfloat[]{\fbox{\includegraphics[width=7cm]{/Cap:Resultados/output_002.png}}} { }
-\subfloat[]{\fbox{\includegraphics[width=7cm]{/Cap:Resultados/image_02:03_002.jpg}}}
+\subfloat[]{\fbox{\includegraphics[width=7cm]{/Cap:Resultados/image_02_03_002.jpg}}}
 \caption[Resultados SWT y enfoque propuesto - I]{\textit{Failure sample case} 
 para el enfoque SWT (a). Buen resultado para el enfoque propuesto (b) para la 
 Figura~\ref{Fig:cap-resultados:Components-amargura.a}.}
@@ -400,7 +401,7 @@ Figura~\ref{Fig:cap-resultados:Components-amargura.a}.}
 \setlength{\fboxsep}{0pt}
 \subfloat[]{\includegraphics[width=9cm]{/Cap:Resultados/014}}\\
 \subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:Resultados/output_014.png}}} { }
-\subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:Resultados/image_01:03_014.jpg}}}
+\subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:Resultados/image_01_03_014.jpg}}}
 \caption[Resultados SWT y enfoque propuesto - II]{Resultados SWT (b) y enfoque 
 propuesto (c) para la figura (a).}
 \label{Fig:cap-resultados:quite}
@@ -425,25 +426,17 @@ Ambos algoritmos fueron ejecutados sobre:
 	\end{itemize}
 \end{itemize}  
 
-SWT es más rápido, aproximádamente $50\%$ menor que el enfoque propuesto para
-una imagen aleatoria, pero esto no significa que durante las pruebas el SWT se
+SWT es más rápido (Figura~\ref{fig:cap-resultados:time_exec}), 
+aproximádamente $50\%$ menor que el enfoque propuesto,
+pero esto no significa que durante las pruebas el SWT se
 ejecutó en un menor tiempo. Actualmente, demoró 1h 56 min en tiempo de ejecución
-sobre todo el \textit{data test}, mientras que, el enfoque propuesto 1h 52 min.
+sobre todo el \textit{data test set}, mientras que, el enfoque propuesto 1h 52 min.
 Por otra parte, SWT empleó más \textit{memory allocation}, en promedio 1.5GiB, y
-el enfoque propuesto 250MiB.
+el enfoque propuesto 250MiB\footnote{MebiByte, $1$MiB$=2^{20}$bytes.}.
 
 
 \begin{figure}[h!]
-	%\centering
 	\includegraphics[scale=.8, angle=0]{time_exec}
 	\caption{Tiempo de ejecución para cada imagen.}
 	\label{fig:cap-resultados:time_exec}
-\end{figure}
-
-\begin{figure}[h!]
-	\centering
-	\subfloat[]{\includegraphics[scale=.5, angle=-90]{pdf_pa}}\\
-	\subfloat[]{\includegraphics[scale=.5, angle=-90]{pdf_swt}}
-	\caption{Tiempo de ejecución para cada imagen.}
-	\label{fig:cap-resultados:time_size}
 \end{figure}
