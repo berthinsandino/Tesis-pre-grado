@@ -1,442 +1,77 @@
-\chapter{RESULTADOS}
-\label{cap-resultados}
-
-\section{Pre-procesamiento}
-En vista que el objetivo de la fase de pre-procesamiento es eliminar regiones de la
-imagen cuya información no sea relevante para el proceso de segmentación de 
-texto, se optó por realizar pruebas en base a los métodos expuestos en el 
-Capítulo~\ref{cap-preprocesamiento} con la finalidad de escoger los métodos a 
-usar en cada etapa de la fase de pre-procesamiento.
-
-La Tabla~\ref{tab:Cap-resultados:Comparativo:ColorFiltering}, expone las razones
-por las cuales se elige el enfoque \textit{ad-hoc} para la etapa \textit{color 
-filtering}. De igual forma, la Tabla~\ref{tab:Cap-resultados:Comparativo:SmoothingSpatialFilter}, 
-expone las razones por las cuales se elige el filtro de la Mediana en la etapa
-\textit{smoothing spatial filter}. Y finalmente, en la Tabla~\ref{tab:Cap-resultados:Comparativo:Thresholding}, 
-se presentan las razones por las que se prefiere el uso del \textit{Niblack's
-method} sobre el \textit{Otsu's method} pese a su complejidad para determinar el 
-valor del \textit{thresholding}.
-
-\begin{figure}[h!]
-	\centering
-  \subfloat[]{\includegraphics[width=4.5cm]{/Cap:Resultados/071}\label{Fig:Cap-resultados:threshold.a}} { }
-  \subfloat[]{\includegraphics[width=4.5cm]{/Cap:Resultados/071_otsu}\label{Fig:Cap-resultados:threshold.b}} { }
-  \subfloat[]{\includegraphics[width=4.5cm]{/Cap:Resultados/071_niblack}\label{Fig:Cap-resultados:threshold.c}} \\    
-
-  \subfloat[]{\includegraphics[width=4.5cm]{/Cap:Resultados/097}\label{Fig:Cap-resultados:threshold.d}} { }
-  \subfloat[]{\includegraphics[width=4.5cm]{/Cap:Resultados/097_otsu}\label{Fig:Cap-resultados:threshold.e}} { }
-  \subfloat[]{\includegraphics[width=4.5cm]{/Cap:Resultados/097_niblack}\label{Fig:Cap-resultados:threshold.f}} \\
-	\caption[\textit{Threshold} global y local.]{\textit{Threshold} global y 
-	local. (a y d) Imágenes originales. (b y e) Resultados aplicando el
-  \textit{Otsu's method}. (c y f) Resultados aplicando el \textit{Niblack's
-  method}.}
-	\label{Fig:Cap-resultados:threshold}
-\end{figure}
-
-\newcolumntype{L}[1]{>{\hsize=#1\hsize\raggedright\arraybackslash}X}%
-\newcolumntype{R}[1]{>{\hsize=#1\hsize\raggedleft\arraybackslash}X}%
-\newcolumntype{C}[2]{>{\hsize=#1\hsize\columncolor{#2}\centering\arraybackslash}X}%
-
-%%TABLA COLOR FILTERING
-\begin{center}
-\begin{table}[H]
-\begin{tabularx}{\textwidth}[t]{ L{0.7}  L{1.3} }
-\hline
-\textbf{\textcolor{myGreen}{\textit{Color Filtering}}} & \\
-\hline
-A \textit{Ad-hoc}. & 
-\begin{minipage}[t]{1.3\linewidth}%
-\begin{itemize}
-\item[A.1] Trabaja sobre cada \textit{pixel}, independiéntemente de \textit{pixels} adyacentes.
-\item[A.2] Hace uso del modelo de color HSV.
-\item[A.3] Para determinar el valor H de cada \textit{pixel}, puede usarse un 
-enfoque que maneje números enteros o números punto flotante.
-\item[A.4] \textbf{Complejidad:} $O(W H C_1)$, donde $C_1$ representa la 
-complejidad de las operaciones usadas para hallar el valor H.\\
-\end{itemize} 
-\end{minipage}\\
-\hline
-B \textit{Neural Networks} &
-\begin{minipage}[t]{1.3\linewidth}%
-\begin{itemize}
-\item[B.1] Usa valores locales de una ventana de tamaño $S\times S$ ($S = 5$).
-\item[B.2] Las pruebas llevadas a cabo fueron realizadas usando el modelo de 
-color por defecto (RGB).
-\item[B.3] Hace uso de operaciones sobre punto flotante.
-\item[B.4] \textbf{Complejidad:} $O(W H S^2 C_2)$, donde $S$ es el tamaño de la
-ventana, $C_2$ representa la complejidad de las operaciones usadas para
-determinar la probabilidad que un \textit{pixel} tiene de pertenecer a una de
-las dos clases (\textit{background}, \textit{foreground}).
-\end{itemize} 
-\end{minipage}
-\end{tabularx}
-\caption{Análisis entre las técnicas consideradas durante la fase de 
-pre-Procesamiento, sub-fase \textit{Color Filtering}}
-\label{tab:Cap-resultados:Comparativo:ColorFiltering}
-\end{table}
-\end{center}
-
-%%TABLA SMOOTHING SPATIAL FILTER
-\begin{center}
-\begin{table}[H]
-\begin{tabularx}{\textwidth}[t]{ L{0.7}  L{1.3} }
-\hline
-\textbf{\textcolor{myGreen}{\textit{Smoothing Spatial Filter}}} & \\
-\hline
-A \textit{Mean}. & 
-\begin{minipage}[t]{1.3\linewidth}%
-\begin{itemize}
-\item[A.1] El valor del nuevo \textit{pixel} se ve afectado por todos los 
-valores de los \textit{pixels} vecinos considerados en una ventana de tamaño
-$S\times S$.
-\item[A.2] Los valores de los \textit{pixels}, en muchos casos, son valores
-nuevos que difieren drásticamente de los originales.
-\item[A.3] \textbf{Complejidad:} $O(W H S^2 C_3)$, donde $C_3$ es la 
-complejidad de llevar a cabo la media aritmética.\\
-\end{itemize} 
-\end{minipage}\\
-\hline
-B \textit{Median} &
-\begin{minipage}[t]{1.3\linewidth}%
-\begin{itemize}
-\item[B.1] Es un método que brinda un promedio más robusto que el proporcionado 
-por la media de forma tal que, un \textit{pixel} no representativo que se
-encuentre en la ventana de tamaño $S\times S$, no afecte el resultado de forma
-significante.
-\item[B.2] Dado que el valor de la mediana debe de ser igual a uno de los
-\textit{pixels} dentro de la ventana, el filtro de la mediana no crea valores
-nuevos.
-\item[B.3] \textbf{Complejidad:} $O(19~ W H)$, usando una ventana con $S=3$. 
-\cite{Devillard:FMS:web}
-\end{itemize} 
-\end{minipage}
-\end{tabularx}
-\caption{Análisis entre las técnicas consideradas durante la fase de 
-pre-Procesamiento, sub-fase \textit{Smoothing Spatial Filter}}
-\label{tab:Cap-resultados:Comparativo:SmoothingSpatialFilter}
-\end{table}
-\end{center}
-
-%%TABLA THRESHOLDING
-\begin{center}
-\begin{table}[H]
-\begin{tabularx}{\textwidth}[t]{ L{0.7}  L{1.3} }
-\hline
-\textbf{\textcolor{myGreen}{\textit{Thresholding}}} & \\
-\hline
-A \textit{Otsu's method}. & 
-\begin{minipage}[t]{1.3\linewidth}%
-\begin{itemize}
-\item[A.1] Hace uso de información global para determinar el valor del 
-\textit{threshold} (Figura~\ref{Fig:Cap-resultados:threshold}).
-\item[A.2] \textbf{Complejidad:} $O(W H + C_4)$, donde $C_4$ representa la 
-complejidad de las operaciones usadas para hallar el valor del
-\textit{threshold}.\\
-\end{itemize}
-\end{minipage}\\
-\hline
-B \textit{Niblack's Method} &
-\begin{minipage}[t]{1.3\linewidth}%
-\begin{itemize}
-\item[A.1] Hace uso de información local para determinar el valor del 
-\textit{threshold} mediante una ventana de tamaño $S\times S$
-(Figura~\ref{Fig:Cap-resultados:threshold}).
-\item[B.2] El tamaño de la ventana limita a trabajar sobre una imagen con 
-dimensiones reducidas ($[\frac{S}{2}, W-\frac{S}{2}]$ y $[\frac{S}{2},
-H-\frac{S}{2}]$). Se optó por determinar una ventana con $S = 50$.
-\item[B.3] \textbf{Complejidad:} $O(2~ W H + W H C_5)$, donde $C_5$ representa 
-la complejidad de las operaciones usadas para determinar los valores $\mu$ y
-$\sigma$ para determinar el valor del \textit{threshold}.\\
-\end{itemize} 
-\end{minipage}\\
-\hline
-C \textit{Bernsern's Method} &
-\begin{minipage}[t]{1.3\linewidth}%
-\begin{itemize}
-\item[C.1] Hace uso de información local para determinar el valor del \textit{threshold}.
-\item[C.2] Descartado por los resultados mostrados durante las pruebas (p. ej. Figura~\ref{Fig:Cap-segmentaciontexto:thresholdingB.a}).\\
-\end{itemize}
-\end{minipage}\\
-\hline
-D \textit{Triangle's Method} &
-\begin{minipage}[t]{1.3\linewidth}%
-\begin{itemize}
-\item[D.1] Hace uso de información global para determinar el valor del \textit{threshold}.
-\item[D.2] Descartado por los resultados mostrados durante las pruebas (p. ej. Figura~\ref{Fig:Cap-segmentaciontexto:thresholdingB.b}).\\
-\end{itemize}
-\end{minipage}
-\end{tabularx}
-\caption{Análisis entre las técnicas consideradas durante la fase de 
-pre-Procesamiento, sub-fase \textit{Thresholding}}
-\label{tab:Cap-resultados:Comparativo:Thresholding}
-\end{table}
-\end{center}
-
-%\clearpage
-\section{Segmentación de Texto}
-\subsection{\textit{Disjoint-sets}}
-La estructura de datos Disjoint-set premite formar imágenes con regiones 
-(componentes) cuyo número sea reducido $80\%$ o $95\%$
-(Figura~\ref{Fig:cap-resultados:Components-amargura}), generalmente depediendo
-de:
-\begin{itemize}
-	\item El modelo de color (Figura~\ref{Fig:cap-resultados:Components-letrerochino}).
-	\item La función $\delta_{UF}$.
-	\item El valor para el parámetro $\varphi$ (Figura~\ref{Fig:cap-resultados:Components-cs}).
-\end{itemize}
-
-\begin{figure}[h!]
-%432 & 95
-  \centering
-  \subfloat[]{\includegraphics[width=7cm]{/Cap:MarcoTeorico/letrero_432K}\label{Fig:cap-resultados:Components-amargura.a}} { }
-  \subfloat[]{\includegraphics[width=7cm]{/Cap:MarcoTeorico/letrero_95K}\label{Fig:cap-resultados:Components-amargura.b}}
-  \caption[Regiones conexas de una fotografía]{Regiones conexas de una
-  fotografía con un $80\%$. (a)Imagen original. (b)Componentes.}
-  \label{Fig:cap-resultados:Components-amargura}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \subfloat[]{\includegraphics[width=7cm]{/Cap:Resultados/a10_pro}} \\
-  \subfloat[]{\includegraphics[width=7cm]{/Cap:Resultados/a10_hsv}} { }
-  \subfloat[]{\includegraphics[width=7cm]{/Cap:Resultados/a10_rgb}}
-  \caption[Regiones conexas de una fotografía]{Regiones conexas de una
-  fotografía con un $95\%$. (a)Imagen original*. (b)Componentes HSV.
-(c)Componentes RGB.}\tiny{*Modificación basada en la fuente:
-\url{http://abcblogs.abc.es/trasunbiombochino/2007/05/08/los-biombos-chinos/}}
-  \label{Fig:cap-resultados:Components-letrerochino}
-\end{figure}
-
-%\newpage
-\clearpage
-\begin{figure}[h!]
-  \centering
-  \subfloat[]{\includegraphics[width=5cm]{/Cap:Resultados/cs00}\label{Fig:cap-resultados:Components-cs.a}} { }
-  \subfloat[]{\includegraphics[width=5cm]{/Cap:Resultados/cs01}} { }
-  \subfloat[]{\includegraphics[width=5cm]{/Cap:Resultados/cs02}} \\
-  \subfloat[]{\includegraphics[width=5cm]{/Cap:Resultados/cs03}} { }
-  \subfloat[]{\includegraphics[width=5cm]{/Cap:Resultados/cs04}} { }
-  \subfloat[]{\includegraphics[width=5cm]{/Cap:Resultados/cs05}} 
-  \caption[Regiones conexas de una fotografía]{Regiones conexas de una 
-  fotografía con un $95\%$. (a)Imagen original*. (b, c, d, e y f)Resultados de
-aplicar la estructura DS con diferentes valores para $\varphi$.}\tiny{*Fuente:
-ICDAR 2003}
-  \label{Fig:cap-resultados:Components-cs}
-\end{figure}
-
-\subsection{\textit{K-means clustering}}
-\textit{K-means}, al afrontar el problema de segmentación en imágenes, intentará
-agrupar las componentes de acuerdo a la función $J$, pero para ello es necesario
-determinar el número de \textit{clusters} ($k$). En una imágen, esta tarea es un
-proceso casi imposible dado que, no hay forma de controlar la variedad de
-colores que pueden presentarse en la naturaleza. Razón por la cual, cada imágen
-es sometida a los filtros antes expuestos, de tal modo que, en este paso se
-puede asegurar que se trabaja (en su gran mayoría) con variaciones del color
-azul. Como el texto dentro del letrero informativo - direccional es consistente
-con respecto al color, se puede proponer la hipótesis de que al establecer el
-parámetro $k=3$, al menos un \textit{cluster}, y a lo más dos, formarán parte
-del texto (Figura~\ref{Fig:cap-resultados:km}).
-
-La Figura~\ref{Fig:cap-resultados:thresh} muestra la aplicación de las dos 
-técnicas presentadas para la segmentación de letrero presentado en la
-Figura~\ref{Fig:cap-resultados:Components-cs.a}.
-\begin{figure}[h!]
-	\centering
-	\includegraphics[height=3.cm]{/Cap:Resultados/cs_thresh}
-	\caption{Segmentación de texto mediante \textit{Disjoint-sets} y \textit{K-means}}
-	\label{Fig:cap-resultados:thresh}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \subfloat[]{\includegraphics[height=3cm]{/Cap:Resultados/002}} { }
-  \subfloat[]{\includegraphics[height=3cm]{/Cap:Resultados/018}} { }
-  \subfloat[]{\includegraphics[height=3cm]{/Cap:Resultados/046}} \\
-  \subfloat[]{\includegraphics[height=3cm]{/Cap:Resultados/km_002}} { }
-  \subfloat[]{\includegraphics[height=3cm]{/Cap:Resultados/km_018}} { }
-  \subfloat[]{\includegraphics[height=3cm]{/Cap:Resultados/km_046}} 
-  \caption[\textit{Clustering}]{\textit{Clustering}. (a, b y c)Imágenes 
-  originales. (d, e y f)Resultados del KM luego de formar las componentes
-conexas.}
-  \label{Fig:cap-resultados:km}
-\end{figure}
-
-\subsection{\textit{Refinement step}}
-Luego de tener una imágen con tres \textit{clusters}, o dicho de otra forma,
-una imagen con tres colores, el siguiente paso es formar componentes con el
-objetivo de, mediante el uso de heurísticas, remover componentes cuya
-probabilidad de formar parte del texto sea muy baja. Por lo cual, se
-consideraron las siguientes reglas:
+\chapter*{CONCLUSIONES}
+\label{cap:conclusiones}
+\addcontentsline{toc}{chapter}{\numberline{}CONCLUSIONES}
 \begin{enumerate}
-	\item Una componente debe estar compuesta por al menos 50 \textit{pixels}.
-	\item La razón entre el alto y ancho de la region rectangular que encapsula 
-	una componente tiene que estar dentro del rango $1/5$ y $5$.
-	\item Una componente puede tener, a lo más, dos otras componentes dentro de 
-	la componente.
+	\item Se propuso un nuevo enfoque para la segmentación de texto en fotografías
+	que contengan letreros informativos - direccionales de las calles de la ciudad
+de Cusco mediante variaciones del algoritmo \textit{K-means clustering} y la
+estructura de datos \textit{Disjoint-sets}, lográndose optimizar los resultados.
+	\item Se recolectó un conjunto de 120 fotografías\footnote{Todas las 
+	fotografías se encuentran en el disco adjunto al ejemplar de tesis.}
+conteniendo letreros informativos - direccionales de la ciudad de Cusco, de las
+cuales se armó un \textit{data set} de 92 fotografías con el objetivo de abordar
+aspectos que influyan en los resultados como el estado del letrero, inclinación,
+tamaño, calidad de la fotografía, niveles de luz y oscuridad (sombras).
+	\item Todos los algoritmos presentados fueron implementados haciendo uso de 
+	diferentes lenguajes de programación. Sin embargo, se utilizó C++ como
+lenguaje principal sobre el cual, fueron implementados únicamente los algoritmos
+usados en el enfoque propuesto optimizándolos con la finalidad de dismiuir su
+complejidad. \footnote{Para consultar detalládamente las implementaciones, hacer
+referencia del código fuente adjunto en el disco o el repositorio
+\url{https://github.com/berthinsandino/Tesis-pre-grado/tree/master}.}
+		\begin{itemize}
+			\item Estructuras de datos:
+			\begin{itemize}
+				\item \textit{Hash table}. Se implementó un \textit{hash table} de 
+				tamaño $2^b$ para elementos con $b$ \textit{bits} de longitud, de tal
+				forma que, para un valor $k$, el $hash_m(k)$ está definido como:
+				\begin{equation}
+					hash_m(k) = k \text{ xor } 2^b - 1
+				\end{equation}
+				\item \textit{Disjoint sets}. Estructura que hace uso del algoritmo 
+				\textit{Union-Find} con las optimizaciones de los enfoques
+				\textit{weighted quick union} y \textit{path compression}.
+			\end{itemize}
+			\item Algoritmos:
+			\begin{itemize}
+			\item Filtro \textit{ad-hoc}. Hace uso de un enfoque de conversión a 
+			enteros para hallar el valor \textit{Hue} evitándose el uso de operaciones
+			punto flotante.
+			\item \textit{Median filter}. Emplea un método óptimo de búsqueda de la 
+			mediana para un kernel con $S=3$. Lleva a cabo 19 operaciones de
+			intercambio y cada intercambio hace uso de tres operaciones \textbf{xor},
+			de esta forma se logra evitar el uso de memoria adicional.
+			\item \textit{Niblack's thresholding}. Para el cálculo de los estadísticos
+			$\mu$ y $\sigma^2$. \footnote{Para determinar el valor de
+			$\sigma$(desviación estándar), primero se debe determinar el valor de
+			$\sigma^2$(varianza).} Se utilizaron dos tablas aditivas, por lo que en
+			$O(1)$ se puede llegar a determinar dichos valores para un kernel de
+			tamaño $K$ cualquiera.
+			\item \textit{K-means clustering}. Se presentó una solución polinomial a 
+			un problema no polinomial bajo la consideración de limitar el número de
+			iteraciones para encontrar una solución \textit{optimum local}. \footnote{La
+			demostración de la complejidad polinomial es trivial dado que la entrada
+			del algoritmo es tamaño $W\times H$, y el resto de terminos que aparecen
+			en la complejidad final son constantes.}
+			\item \textit{Refinement step} (regla 3). Mediante el uso de el enfoque de
+			compresión de coordenadas y tablas aditivas se determinó en $O(2\lg(c))$
+			el número de componentes dentro de una componente, siendo $c$ el número
+			total de componentes.
+			\end{itemize}
+		\end{itemize}
+	\item El enfoque propuesto hace uso de los algoritmos \textit{Union - Find}
+	(UF) y \textit{K-means clustering}(KM). El UF reduce los parámetros de entrada
+	para el KM. Mientras que, el KM, es usado para resolver el problema de
+	clusterización mediante una solución polinomial (P) limitando el número de
+	iteraciones.\footnote{Al proponerse la solución P, las soluciones brindadas
+	por el algoritmo pueden o no llegar al \textit{global optimum}.}
+	\item El enfoque propuesto, hace uso de un método no supervisado de 
+	aprendizaje para segmentar imágenes con una característica peculiar, el color.
+	También, se presenta una forma de combinar métodos locales y globales para el
+	procesamiento de imágenes. Locales cuando se usó la información local
+	(\textit{neighbors}) para crear componentes basándose en principios de
+	proximidad del color, y globales durante la fase de \textit{clustering}. El
+	enfoque es capaz de operar bajo limitaciones de memoria en comparación con el
+	enfoque SWT, y aunque SWT es más rápido en tiempo de ejecución, se obtuvieron
+	mejores resultados.	  
 \end{enumerate}
-
-La primera regla, es usada para limpiar pequeños grupos de \textit{pixels} que hayan
-pasado los filtros anteriores. La segunda regla filtra las componentes tales
-como líneas o fechas. Mientras que la tercera regla, se encarga de eliminar
-\textit{frames} (Figura~\ref{Fig:cap-resultados:refinement}).
-
-\begin{figure}[h!]
-  \centering
-  \setlength{\fboxsep}{0pt}
-  \subfloat[]{\fbox{\includegraphics[width=7cm]{/Cap:Resultados/image_02_03_046}}}
-	\caption[Ejemplo de \textit{refinement step}]{Ejemplo de \textit{refinement 
-	step}. (a) Entrada. (b) Resultado.}
-  \label{Fig:cap-resultados:refinement}
-\end{figure}
-
-\newcommand{\nPr}[2]{\,_{#1}P_{#2}} % nPr
-\newcommand{\nCr}[2]{\,_{#1}C_{#2}} % nCr
-\section{Resultados Experimentales}
-Con el objetivo de medir los resultados obtenidos por el enfoque propuesto, se 
-buscaron \textit{papers} con respecto a la ICDAR Text Location Competition, y se
-encontró que el enfoque SWT presentó un buen \textit{performance} sobre otros
-algoritmos para las ediciones ICDAR 2003 y 2005.
-
-Para formar el \textit{data test set}, de un conjunto de 120 fotografías,
-se juntó un total de 91 fotografías aleatóriamente capturadas (más una imagen 
-generada mediante un programa de manipulación de imágenes). Como se determinaron 
-3 \textit{clusters}, yace la necesidad buscar una forma de elegir sobre un 
-subconjunto de ellos. Por simplicidad, se trabajó sobre los tres \textit{clusters}
-y las combinaciones que podrían ser generadas debido a que cada \textit{cluster} 
-representa un grupo de componentes y posee un valor RGB.
-
-Transformando cada valor RGB a \textit{gray-scale}, es factible usar un 
-\textit{sort} y únicamente operar sobre $\nCr{3}{1} +
-\nCr{3}{2}$\footnote{Combinatoria $\nCr{n}{r}$} imágenes generadas por la
-combinación de \textit{clusters} en lugar de  $\nPr{3}{1} +
-\nPr{3}{2}$\footnote{Permutación $\nPr{n}{r}$} permutaciones si únicamente
-hubiésemos considerado los valores RGB.
-
-La Tabla~\ref{tab:results} resume los resultados sobre el \textit{data test
-set}, aunque no fue posible usar el algoritmo original que use el enfoque SWT,
-la comparación está basada en \cite{Saurav:SWT:2010}. Hay $1047$
-\textit{characters} de diferentes tamaños y $92$ letreros informativos -
-direccionales. El \textit{character} más pequeño cabe en una región rectangular
-de $5\times 10$, mientras que el \textit{character} más grande en una región de
-$315 \times 320$.
-
-\begin{table}[h]
-\centering
-\begin{tabular}{ll|r|l|l|l|l|l|}
-\cline{3-8}
-\multicolumn{1}{c}{}                    &                           & \multicolumn{6}{|c|}{ENFOQUE PROPUESTO}   \\ \cline{2-8} 
-                                        & \multicolumn{1}{|c|}{SWT} & \multicolumn{1}{|c|}{$\kappa_1$} & \multicolumn{1}{|c|}{$\kappa_2$} & \multicolumn{1}{|c|}{$\kappa_3$} & \multicolumn{1}{|c|}{$\kappa_1-\kappa_2$} & \multicolumn{1}{|c|}{$\kappa_1-\kappa_3$} & \multicolumn{1}{|c|}{$\kappa_2-\kappa_3$} \\ \hline
-\multicolumn{1}{|l}{\% SW} & \multicolumn{1}{|c|}{33.33}&\multicolumn{1}{|c|}{38.04}&\multicolumn{1}{|c|}{14.13}&\multicolumn{1}{|c|}{4.35}&\multicolumn{1}{|c|}{54.35}&\multicolumn{1}{|c|}{34.78}&\multicolumn{1}{|c|}{22.83}\\ \hline
-\multicolumn{1}{|l}{\% SC} & \multicolumn{1}{|c|}{57.78}&\multicolumn{1}{|c|}{56.16}&\multicolumn{1}{|c|}{24.55}&\multicolumn{1}{|c|}{2.77}&\multicolumn{1}{|c|}{78.51}&\multicolumn{1}{|c|}{55.30}&\multicolumn{1}{|c|}{33.72}\\ \hline
-\end{tabular}
-\caption[Comparación del \textit{performance}]{Comparación del 
-\textit{performance} entre el enfoque propuesto y el SWT. (SW : segmented words,
-SC : segmented characters, $\kappa_i$ : i-th cluster).}
-\label{tab:results}
-\end{table}
-
-\begin{figure}[h!]
-	%\centering
-	\includegraphics[scale=.65, angle=-90]{plot_segmentedchars}
-	\caption{Segmented chars}
-	\label{fig:cap-resultados:segchars}
-\end{figure}
-
-SWT muestra una precisión de $57.78\%$ y $33.33\%$ para los \textit{characters} 
-correctamente segmentados y palabras correctamente segmentadas. El enfoque
-propuesto muestra $78.51\%$ y $54.38\%$ para la segmentación de
-\textit{characters} y palabras respectivamente (\textit{clusters}
-$\kappa_1-\kappa_2$).
-
-Dentro del conjunto de imágenes, existen cuatro figuras 
-(Figura~\ref{Fig:cap-resultados:failure}) para las cuales, ninguno de los
-enfoques (SWT y el propuesto) pueden segmentar correctamente al menos un
-\textit{character}. 
-
-\begin{figure}[h!]%
-\centering
-\subfloat[]{\includegraphics[width=6cm]{/Cap:Resultados/030.jpg}\label{Fig:cap-resultados:failure.a}} { }
-\subfloat[]{\includegraphics[width=6cm]{/Cap:Resultados/074.jpg}\label{Fig:cap-resultados:failure.b}}\\
-\subfloat[]{\includegraphics[width=6cm]{/Cap:Resultados/085.jpg}\label{Fig:cap-resultados:failure.c}} { }
-\subfloat[]{\includegraphics[width=6cm]{/Cap:Resultados/088.jpg}\label{Fig:cap-resultados:failure.d}}
-\caption{Failure cases.}
-\label{Fig:cap-resultados:failure}
-\end{figure}
-
-El enfoque propuesto falla porque, luego del \textit{Color filtering}, el 
-\textit{Niblack's thresholding} distorciona el texto y la máscara creada para
-las imágenes (a, c y d) guardará información poco relevante para formar los
-\textit{clusters} (Figura~\ref{Fig:cap-resultados:distortion}). La
-Figura~\ref{Fig:cap-resultados:failure.b} tiene el texto de color negro,
-consecuentemente, esa región es eliminada por el filtro \textit{Ad-Hoc} (esta
-imagen fue manipulada, únicamente con fines de \textit{testing}).
-
-\begin{figure}[h!]%
-\centering
-\includegraphics[width=.8\columnwidth]{/Cap:Resultados/I085.jpg}
-\caption{Máscara generada por el \textit{color filtering} para la 
-Figura.~\ref{Fig:cap-resultados:failure.c}.}
-\label{Fig:cap-resultados:distortion}
-\end{figure}
-
-
-Otro aspecto a considerar, es que a pesar de los resultados superiores mostrados
-por el enfoque propuesto frente al SWT (Figura~\ref{Fig:cap-resultados:good}),
-algunas imágenes presentan regiones que no forman parte del texto
-(Figura~\ref{Fig:cap-resultados:quite}).
-
-\begin{figure}[ht]
-\centering
-\setlength{\fboxsep}{0pt}
-\subfloat[]{\fbox{\includegraphics[width=7cm]{/Cap:Resultados/output_002.png}}} { }
-\subfloat[]{\fbox{\includegraphics[width=7cm]{/Cap:Resultados/image_02_03_002.jpg}}}
-\caption[Resultados SWT y enfoque propuesto - I]{\textit{Failure sample case} 
-para el enfoque SWT (a). Buen resultado para el enfoque propuesto (b) para la 
-Figura~\ref{Fig:cap-resultados:Components-amargura.a}.}
-\label{Fig:cap-resultados:good}
-\end{figure}
-
-\begin{figure}[ht]%
-\centering
-\setlength{\fboxsep}{0pt}
-\subfloat[]{\includegraphics[width=9cm]{/Cap:Resultados/014}}\\
-\subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:Resultados/output_014.png}}} { }
-\subfloat[]{\fbox{\includegraphics[width=8cm]{/Cap:Resultados/image_01_03_014.jpg}}}
-\caption[Resultados SWT y enfoque propuesto - II]{Resultados SWT (b) y enfoque 
-propuesto (c) para la figura (a).}
-\label{Fig:cap-resultados:quite}
-\end{figure}
-
-\clearpage
-\subsection{Aspectos técnicos}
-Ambos algoritmos fueron ejecutados sobre:
-\begin{itemize}
-	\item \textit{Notebook}: \textbf{HP - Pavilion dv6 2177la} (ver 
-	\hyperlink{page.86}{Anexo B} para consultar más detalles).
-	\item Sistema Operativo: \textbf{Ubuntu 13.04 x86\_64}.
-	\item Lenguaje de programación: \textbf{C++}.
-	\item Compilador \textbf{g++ (Ubuntu/Linaro 4.7.3-1ubuntu1) 4.7.3}.
-	\item Librerias:
-	\begin{itemize}
-		\item La implementación del SWT requiere de las librerías 
-		\textbf{boost}\footnote{\url{http://www.boost.org/}} y
-\textbf{OpenCV}\footnote{\url{http://opencv.org/}}.
-		\item El enfoque propuesto hace uso de la librería \textbf{CImg}
-		\footnote{\url{http://cimg.sourceforge.net/}}.
-	\end{itemize}
-\end{itemize}  
-
-SWT es más rápido (Figura~\ref{fig:cap-resultados:time_exec}), 
-aproximádamente $50\%$ menor que el enfoque propuesto,
-pero esto no significa que durante las pruebas el SWT se
-ejecutó en un menor tiempo. Actualmente, demoró 1h 56 min en tiempo de ejecución
-sobre todo el \textit{data test set}, mientras que, el enfoque propuesto 1h 52 min.
-Por otra parte, SWT empleó más \textit{memory allocation}, en promedio 1.5GiB, y
-el enfoque propuesto 250MiB\footnote{MebiByte, $1$MiB$=2^{20}$bytes.}.
-
-
-\begin{figure}[h!]
-	\includegraphics[scale=.8, angle=0]{time_exec}
-	\caption{Tiempo de ejecución para cada imagen.}
-	\label{fig:cap-resultados:time_exec}
-\end{figure}
